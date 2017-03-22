@@ -1,0 +1,104 @@
+
+.easify_icon {
+    background-image: url("../images/easify_logo.png");
+    background-repeat: no-repeat;
+    border: none;
+    float: left;
+    height: 32px;
+    margin: 5px 5px 5px 0px;
+    width: 64px;
+}
+
+a.easify_link {
+    text-decoration: none;
+    position: absolute;
+    width: 64px; 
+    height: 32px;
+}
+
+table.easify_server_status {
+    border: none;
+    background-color: #666;
+    color: #fff;
+    padding: 5px;
+
+}
+
+img.easify_server_status {
+    vertical-align: text-bottom;
+}
+
+.wordpress_web_service_location {
+    display: inline-block; 
+    background: #666; 
+    color: #fff; 
+    padding: 5px; 
+    font-size: 13px;
+}
+
+table.wc_gateways, table.wc_shipping {
+    position: relative;
+}
+
+.form-table th {
+    padding: 8px;
+    padding-top: 20px;
+}
+
+.widefat {
+    border-spacing: 0px;
+    width: 100%;
+    clear: both;
+    margin: 0px;
+
+    background: none repeat scroll 0% 0% #FFF;
+
+    border: 1px solid #E5E5E5;
+    box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.04);
+}
+
+
+
+.widefat tfoot tr th {
+    color: #333;
+    border-bottom: 1px solid #E1E1E1;
+}
+
+.wc_shipping TABLE{
+    margin-right: 30px !important;
+}
+
+.easify-options-shipping-table-col1 {
+    width: 300px !important;
+}
+
+.easify-options-shipping-table-col2 {
+    width: auto !important;
+}
+
+.easify-warning{
+    color: red;
+}
+
+.tooltip_templates { display: none; }
+
+.easify_tip_image{
+    width: 24px;
+    height: 24px;
+    margin-left: 10px;
+    vertical-align: top;
+}
+
+.tooltipster-content {
+    max-width: 450px !important;
+}
+
+
+/* Stops the WordPress footer floating up over the content. */
+#wpfooter{
+    position: static;
+}
+
+.easify-loggin-option{
+    padding-top: 6px;
+}
