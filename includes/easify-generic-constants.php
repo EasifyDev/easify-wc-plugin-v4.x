@@ -19,8 +19,13 @@ if (!defined('EASIFY_DISCOVERY_SERVER_ENDPOINT_URI')) {
 }
 
 if (!defined('EASIFY_CLOUD_API_URI')) {
-  //  define('EASIFY_CLOUD_API_URI', "http://testeasifycloudapi.easify.co.uk/api/EasifyCloudApi");
+  // define('EASIFY_CLOUD_API_URI', "http://testeasifycloudapi.easify.co.uk/api/EasifyCloudApi");
     define('EASIFY_CLOUD_API_URI', "http://localhost:8081/api/EasifyCloudApi");
+}
+
+if (!defined('EASIFY_HELP_BASE_URL')) {
+  // define('EASIFY_HELP_BASE_URL', "https://www.easify.co.uk");
+    define('EASIFY_HELP_BASE_URL', "http://localhost");
 }
 
 
