@@ -56,7 +56,7 @@ use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
 
 function GetKey() {
-    $key_file = get_home_path() . 'easify.cfg'; 
+    $key_file = get_home_path() . 'esfywc.cfg'; 
 
     if (file_exists($key_file)) {
         $keyString = file_get_contents($key_file);

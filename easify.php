@@ -36,7 +36,8 @@ if (!defined('ABSPATH')) {
 // Logging can be enabled either in the Easify Plugin Options (via the database)
 // or in the easify-generic-constants.php file.
 if (!defined('EASIFY_LOGGING_BY_DB_FLAG')) {
-    define('EASIFY_LOGGING_BY_DB_FLAG', get_option('easify_options_logging'));
+   // $test = get_option('easify_options_logging')['easify_logging_enabled'];
+    define('EASIFY_LOGGING_BY_DB_FLAG', get_option('easify_options_logging')['easify_logging_enabled']);
 }
 
 if (!defined('PLUGIN_ROOT_PATH')) {

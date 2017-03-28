@@ -98,7 +98,12 @@ class Easify_Generic_Easify_Server {
         // HTTPS and BASIC Authentication
         // NB. required to allow self signed certificates
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYSTATUS, false);
+        
+        if (version_compare(phpversion(), "7.0.7", ">=")) {
+            // CURLOPT_SSL_VERIFYSTATUS is PHP 7.0.7 feature
+            curl_setopt($ch, CURLOPT_SSL_VERIFYSTATUS, false);            
+        }
+
         // do not verify https certificates
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
         // if https is set, user basic authentication

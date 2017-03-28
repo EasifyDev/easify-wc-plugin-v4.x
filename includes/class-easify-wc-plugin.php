@@ -58,7 +58,9 @@ class Easify_WC_Plugin {
      * initialise hooks
      */
     private function initialise_hooks() {
-        // Intercepts incoming web service calls from teh Easify Server
+        Easify_Logging::Log('Easify_WC_Plugin.initialise_hooks()');
+        
+        // Intercepts incoming web service calls from the Easify Server
         add_action('parse_request', array($this, 'receive_from_easify'));
 
         // Register to be notified by WooCommerce when an order is ready to be sent to Easify
@@ -82,6 +84,8 @@ class Easify_WC_Plugin {
      * handles incoming Easify requests 
      */
     public function receive_from_easify() {
+        Easify_Logging::Log('Easify_WC_Plugin.receive_from_easify()');
+                
         /* Any requests to /easify or /easify/ will be notifications coming from the Easify Server 
          * i.e. product update notifications. */
         if (!$_SERVER["REQUEST_URI"]) {
@@ -94,11 +98,13 @@ class Easify_WC_Plugin {
         }
 
         // Notification from Easify Server - process it...
-
+        Easify_Logging::Log('Easify_WC_Plugin.receive_from_easify() - Request to /Easify/ received, creating Easify web service.');
+        
         // Create Easify Web Service...
         $ews = new Easify_WC_Web_Service(get_option('easify_username'), Decrypt(get_option('easify_password')), null, get_option('easify_web_service_location'));
 
         // Process the request
+        Easify_Logging::Log('Easify_WC_Plugin.receive_from_easify() - Processing incoming Easify Web Service request.');        
         $ews->process();
 
         exit; // do not return control to WordPress

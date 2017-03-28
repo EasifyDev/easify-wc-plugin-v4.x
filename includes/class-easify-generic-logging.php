@@ -40,7 +40,15 @@ class Easify_Logging {
      * @return type void
      */
     public static function Log($text) {
-        if (!EASIFY_LOGGING_BY_DB_FLAG && !EASIFY_LOGGING) {
+        
+        // Can't guarantee EASIFY_LOGGING_BY_DB_FLAG has been set handle case 
+        // where not defined.
+        $database_debug_flag = false;        
+        if (defined('EASIFY_LOGGING_BY_DB_FLAG')) {
+            $database_debug_flag = EASIFY_LOGGING_BY_DB_FLAG;
+        }
+                
+        if (!$database_debug_flag && !EASIFY_LOGGING) {
             return;
         }
 
