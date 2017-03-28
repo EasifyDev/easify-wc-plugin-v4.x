@@ -1,22 +1,30 @@
-=== Easify WooCommerce Connector ===
+=== Easify V4.x WooCommerce Connector ===
 Contributors: easify
 Donate link: http://www.easify.co.uk/
-Tags: easify, easu, epos, business management, epos software, stock control software, accounting software, invoicing software, small business software, ecommerce, e-commerce, commerce, woothemes, wordpress ecommerce, store, sales, sell, shop, shopping, cart, checkout, reports, inventory, stock, reports, api, soap, web service, synchronise, connector 
+Tags: easify, epos, epos software, stock control software, accounting software, invoicing software, small business software, ecommerce, e-commerce, woothemes, wordpress ecommerce, woocommerce, shopping cart
 Requires at least: 4.0
 Tested up to: 4.7
 Stable tag: 1.4
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Connects Easify Business Management, EPOS (Electronic Point of Sale), stock control and invoicing software to WooCommerce.
+Connects Easify V4.x Small Business Software to your WooCommerce online shop, 
+allowing you to synchronise stock levels between your physical shop and your
+online shop.
 
 == Description ==
  
-Gives Easify users the ability to control parts of their WooCommerce enabled WordPress website via Easify.
+This plugin connects your Easify V4.x Small Business software with your 
+WooCommerce online shop.
 
-WooCommerce orders are automatically raised in Easify ready for processing.
+Orders that are placed via your WooCommerce enabled website will be 
+automatically sent to your Easify Server.
 
-Synchronising your product database and stock levels across Easify and WooCommerce.
+Products that you add to your Easify Server will be automatically uploaded to 
+your WooCommerce enabled website.
+
+As you sell products in your traditional shop, your stock levels will be 
+automatically synchronised with your WooCommerce online shop.
 
 == Installation ==
 
@@ -27,13 +35,13 @@ Synchronising your product database and stock levels across Easify and WooCommer
 * MySQL version 5.0 or greater
 * Some payment gateways require fsockopen support (for IPN access)
 * WooCommerce 2.6.2
-* Easify V4.32
+* Easify V4.39.1 or greater
 
 = Automatic installation =
 
 Automatic installation is the easiest option as WordPress handles the file transfers itself and you don’t need to leave your web browser. To do an automatic install of the Easify WooCommerce Connector, log in to your WordPress dashboard, navigate to the Plugins menu and click Add New.
 
-In the search field type “Easify WooCommerce Connector” and click Search Plugins. Once you’ve found our plugin you can view details about it such as the the point release, rating and description. Most importantly of course, you can install it by simply clicking “Install Now”.
+In the search field type “Easify V4.x WooCommerce Connector” and click Search Plugins. Once you’ve found our plugin you can view details about it such as the the point release, rating and description. Most importantly of course, you can install it by simply clicking “Install Now”.
 
 = Manual installation =
 
@@ -41,21 +49,28 @@ The manual installation method involves downloading our plugin and uploading it 
 
 == Frequently Asked Questions ==
 
-= What does the Easify WooCommerce Connector do? =
+= What does the Easify V4.x WooCommerce Connector do? =
 
-Gives Easify users the ability to control parts of their WooCommerce enabled WordPress website via Easify.
+This plugin connects your Easify V4.x Small Business software with your 
+WooCommerce online shop.
 
-WooCommerce orders are automatically raised in Easify ready for processing.
+Orders that are placed via your WooCommerce enabled website will be 
+automatically sent to your Easify Server.
 
-Synchronising your product database and stock levels across Easify and WooCommerce.
+Products that you add to your Easify Server will be automatically uploaded to 
+your WooCommerce enabled website.
+
+As you sell products in your traditional shop, your stock levels will be 
+automatically synchronised with your WooCommerce online shop.
 
 = What is Easify? =
 
-Easify is a software application for small business that runs on PCs or laptops with Microsoft Windows.
+Easify is a software application for small business that runs on PCs or laptops 
+with Microsoft Windows.
 
-It provides you with stock control, invoicing, quoting, purchasing, EPOS software and more...
+It provides you with stock control, invoicing, quoting, purchasing, 
+EPOS software, accounting, reporting and more...
 
-All this comes in one easy to use yet powerful software package, and at an amazingly low one off fee.
 
 = Where do I get support? =
 
@@ -65,10 +80,15 @@ support@easify.co.uk
 
 == Screenshots ==
 
-1. Easify, help you run your business all from a single easy to use software package.
-2. Setup, the options needed to connect your Easify server to WooCommerce.
-3. Orders, these settings are used when orders are automatically raised in Easify.
+1. Easify, the only software you need to run your small business, including stock control, billing, purchasing, accounting, reporting etc...
+2. Setup, simply enter your Easify WooCommerce Plugin subscription details and the Easify Plugin will connect to your Easify Server automatically.
+3. Orders, here you can configure how WooCommerce orders are sent to your Easify Server.
 4. Customers, these settings are used when customers are automatically raised in Easify.
-5. Shipping, these settings will be used to link Easify products to WooCommerce shipping options.
-6. Payment, these settings will be used when payments are automatically raise in Easify.
-7. Logging, configure how you want Easify to report on its activities and possible errors.
+5. Coupons, the Easify WooCommerce Plugin supports WooCommerce coupons.
+6. Shipping, map various WooCommerce shipping options to your Easify Server.
+7. Payment, configure how WooCommerce payments are recorded in Easify.
+8. Logging, if you need it you can enable detailed logging for the Easify WooCommerce Plugin.
+
+== Changelog ==
+= 4.0 =
+* Initial release for Easify V4.x.

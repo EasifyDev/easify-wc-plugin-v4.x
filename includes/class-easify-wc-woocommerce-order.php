@@ -1,8 +1,29 @@
 <?php
+/**
+ * Copyright (C) 2017  Easify Ltd (email:support@easify.co.uk)
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
 
 /**
  * This class provides access to the WooCommerce system allowing for read
  * access to WooCommerce orders...
+ * 
+ * @class       Easify_WC_WooCommerce_Order
+ * @version     4.0
+ * @package     easify-woocommerce-connector
+ * @author      Easify 
  */
 class Easify_WC_WooCommerce_Order {
 
@@ -40,16 +61,8 @@ class Easify_WC_WooCommerce_Order {
 
     private function get_coupons($woocommerce_order) {
         $this->coupons = array();
-        foreach ($woocommerce_order->get_items('coupon') as $coupon_item_id => $coupon_item) {
-            //  EASIFY_LOGGING::Log('Coupon name: ' . $coupon_item['name'] . ' Amount: ' . $coupon_item['discount_amount']);           
-
+        foreach ($woocommerce_order->get_items('coupon') as $coupon_item_id => $coupon_item) {   
             array_push($this->coupons, new Easify_WC_WooCommerce_Coupon($coupon_item['name'], $coupon_item['discount_amount']));
-
-//            $coupon_line = array(
-//                'id' => $coupon_item_id,
-//                'code' => $coupon_item['name'],
-//                'amount' => wc_format_decimal($coupon_item['discount_amount'], $dp),
-//            );
         }
     }
 

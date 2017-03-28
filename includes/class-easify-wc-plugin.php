@@ -1,10 +1,19 @@
 <?php
 /**
- * WooCommerce Easify Plugin Class
- * Hooks into WooCommerce and waits for either of two scenarios to occur.
- * 	Scenario 1: WooCommerce Order status changed to Processing, sends sales data back to Easify
- * 	Scenario 2: Easify sends a notification of a product update, get product data 
- *                  from Easify Server and either insert / update or delete the product in WooCommerce
+ * Copyright (C) 2017  Easify Ltd (email:support@easify.co.uk)
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
 require_once( ABSPATH . '/wp-config.php' );
@@ -12,7 +21,22 @@ require_once( ABSPATH . '/wp-admin/includes/image.php' );
 require_once( plugin_dir_path(__FILE__) . 'class-easify-wc-web-service.php' );
 require_once( plugin_dir_path(__FILE__) . 'class-easify-wc-shop.php' );
 require_once( plugin_dir_path(__FILE__) . 'class-easify-wc-send-order-to-easify.php' );
-        
+    
+/**
+ * WooCommerce Easify Plugin Class
+ * 
+ * Hooks into WooCommerce and waits for either of two scenarios to occur.
+ * 	Scenario 1: WooCommerce Order status changed to Processing, sends order 
+ *                  data back to Easify Server via Easify Cloud API.
+ * 	Scenario 2: Easify sends a notification of a product update, get product 
+ *                  data from Easify Server and either insert / update or delete 
+ *                  the product in WooCommerce.
+ * 
+ * @class       Easify_WC_Plugin
+ * @version     4.0
+ * @package     easify-woocommerce-connector
+ * @author      Easify 
+ */
 class Easify_WC_Plugin {
 
     /**

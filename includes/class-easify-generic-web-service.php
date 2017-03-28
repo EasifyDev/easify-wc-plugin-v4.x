@@ -1,23 +1,48 @@
 <?php
+/**
+ * Copyright (C) 2017  Easify Ltd (email:support@easify.co.uk)
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
 
 require_once( 'class-easify-generic-logging.php' );
 
 /**
- * A class that implements an Easify web service to receive notifications from an Easify Server.
+ * A class that implements an Easify web service to receive notifications from 
+ * an Easify Server.
  * 
- * The Easify Server can authenticate with this service either by using http basic authentication
- * (the recommended method) or by passing a pre-shared private key.
+ * The Easify Server can authenticate with this service either by using http 
+ * basic authentication (the recommended method) or by passing a pre-shared 
+ * private key.
  * 
- * The Easify server will send notifications when products have been updated, these changes
- * are propagated to the related eCommerce shop by the $shop class, which must be instantiated
- * before calling the process() method of this class.
+ * The Easify server will send notifications when products have been updated, 
+ * these changes are propagated to the related eCommerce shop by the $shop 
+ * class, which must be instantiated before calling the process() method of 
+ * this class.
  * 
- * You can implement your own shop class by extending the Easify_Generic_Shop abstract class
- * and implementing your own methods to communicate with the particular shop you are using.
+ * You can implement your own shop class by extending the 
+ * Easify_Generic_Shop abstract class and implementing your own methods to 
+ * communicate with the particular shop you are using.
  * 
- * In this case we have created an implementation Easify_WC_Shop which is a class that 
- * extends Easify_Generic_Shop to allow it to communicate with a WooCommerce shop.
+ * In this case we have created an implementation Easify_WC_Shop which is a 
+ * class that extends Easify_Generic_Shop to allow it to communicate with a 
+ * WooCommerce shop.
  * 
+ * @class       Easify_Generic_Web_Service
+ * @version     4.0
+ * @package     easify-woocommerce-connector
+ * @author      Easify 
  */
 abstract class Easify_Generic_Web_Service {
 

@@ -1,7 +1,35 @@
 <?php
+/**
+ * Copyright (C) 2017  Easify Ltd (email:support@easify.co.uk)
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
 
 require_once( 'class-easify-generic-logging.php' );
 
+/**
+ * Easify_Generic_Easify_Cloud_Api class.
+ *
+ * Provides generic access to the Easify Cloud API Server allowing you to 
+ * easily pass a populated Easify Order model object to the Easify Cloud API
+ * Server so that it can be queued for dispatch to the associated Easify Server. 
+ * 
+ * @class       Easify_Generic_Easify_Cloud_Api
+ * @version     4.0
+ * @package     easify-woocommerce-connector
+ * @author      Easify
+ */
 class Easify_Generic_Easify_Cloud_Api {
 
     private $easify_cloud_api_url;

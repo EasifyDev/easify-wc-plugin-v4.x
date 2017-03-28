@@ -10,6 +10,7 @@
  * Requires at least: 4.0
  * Tested up to: 4.7.2
  */
+
 /**
  * Copyright (C) 2017  Easify Ltd (email:support@easify.co.uk)
  * This program is free software; you can redistribute it and/or
@@ -26,6 +27,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
+
 // Exit if accessed directly
 if (!defined('ABSPATH')) {
     exit;
