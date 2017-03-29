@@ -35,7 +35,7 @@ if (!defined('EASIFY_DISCOVERY_SERVER_ENDPOINT_URI')) {
 }
 
 if (!defined('EASIFY_CLOUD_API_URI')) {
-   define('EASIFY_CLOUD_API_URI', "http://easifycloudapi.easify.co.uk/api/EasifyCloudApi");
+   define('EASIFY_CLOUD_API_URI', "https://cloudapi.easify.co.uk/api/EasifyCloudApi");
   //  define('EASIFY_CLOUD_API_URI', "http://localhost:8081/api/EasifyCloudApi");
 }
 

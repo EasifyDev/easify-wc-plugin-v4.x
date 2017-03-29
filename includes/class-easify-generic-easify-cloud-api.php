@@ -48,14 +48,12 @@ class Easify_Generic_Easify_Cloud_Api {
         // initialise PHP CURL for HTTP POST action
         $ch = curl_init();
 
-        // setting up coms to an Easify Server 
-        // NB. required to allow self signed certificates
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-
-        // HTTPS and BASIC Authentication
-        // do not verify https certificates
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-        // if https is set, user basic authentication
+        // Require verification of Easify CloudAPI SSL Cert...
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true); // Set false if debugging aganist self signed cert
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, true); // Set false if debugging aganist self signed cert
+        
+        
+         // HTTPS and BASIC Authentication       
         curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
         curl_setopt($ch, CURLOPT_USERPWD, "$this->username:$this->password");
 
@@ -64,7 +62,7 @@ class Easify_Generic_Easify_Cloud_Api {
         // return result or GET action
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
-        // add post payload
+        // add POST Easify Order Model
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($model));
 
@@ -84,10 +82,6 @@ class Easify_Generic_Easify_Cloud_Api {
         if ($result === false) {
             $result = 'Curl error: ' . curl_error($ch);
         }
-
-//        $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
-//        $header = substr($result, 0, $header_size);
-    //    $body = substr($result, $header_size);
 
         $header_info = curl_getinfo($ch, CURLINFO_HEADER_OUT);
 
