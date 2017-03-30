@@ -154,8 +154,7 @@ class Easify_WC__Plugin_Settings_Page {
     /**
      * create Easify options page tabs
      */
-    private function create_easify_options_tabs($current = 'setup') {
-
+    private function create_easify_options_tabs($current = 'setup') {       
         // a list of the Easify option pages 
         $tabs = array(
             'setup' => 'Credentials',
@@ -1355,6 +1354,8 @@ class Easify_WC__Plugin_Settings_Page {
         ?>
         <p>Enable Easify plugin diagnostic logging.</p>
         <p>The log file will be saved to: <?= plugin_dir_url(__FILE__) . 'logs/easify_log.txt' ?></p>  
+        <p class="easify-warning"><b>NOTE:</b> We recommend only enabling logging for troubleshooting problems, as the log file can 
+        very rapidly grow to take up a lot of disk space.</p>        
         <?php
     }
 
@@ -1767,7 +1768,9 @@ class Easify_WC__Plugin_Settings_Page {
                 <p>Here you can enable logging for the Easify WooCommerce Plugin.</p>
                 <p>When this option is enabled the Easify Plugin will record diagnostic logs to help you troubleshoot
                     problems with your Easify WooCommerce integration.</p>
-                <p>The log file will be saved to: <?= plugin_dir_url(__FILE__) . 'logs/easify_log.txt' ?></p>                
+                <p>The log file will be saved to: <?= plugin_dir_url(__FILE__) . 'logs/easify_log.txt' ?></p>       
+                <p class="easify-warning"><b>NOTE:</b> We recommend only enabling logging for troubleshooting problems, as the log file can 
+                very rapidly grow to take up a lot of disk space.</p>
                 <?= $this->tooltip_click_here_link('logging-logging') ?>                
             </div> 
 

@@ -219,11 +219,11 @@ abstract class Easify_Generic_Web_Service {
 
                     if ($this->shop->IsExistingProduct($this->easify_key_value)) {
                         // update existing product
-                        Easify_Logging::Log("DeleteProduct(" . $this->easify_key_value . ")");
+                        Easify_Logging::Log("Easify_Generic_Web_Service.DeleteProduct(" . $this->easify_key_value . ")");
                         $this->shop->DeleteProduct($this->easify_key_value);
                     } else {
                         // product doesn't exist, log error message
-                        Easify_Logging::Log("DeleteProduct(" . $this->easify_key_value . ") - doesn't exist");
+                        Easify_Logging::Log("Easify_Generic_Web_Service.DeleteProduct(" . $this->easify_key_value . ") - doesn't exist");
                     }
 
                     break;
@@ -234,12 +234,12 @@ abstract class Easify_Generic_Web_Service {
                     // determine if we insert or update the Easify product
                     if ($this->shop->IsExistingProduct($this->easify_key_value)) {
                         // update existing product 
-                        Easify_Logging::Log("UpdateProduct(" . $this->easify_key_value . ")");
+                        Easify_Logging::Log("Easify_Generic_Web_Service.UpdateProduct(" . $this->easify_key_value . ")");
                         $this->shop->UpdateProduct($this->easify_key_value);
                     } else {
                         // product doesn't exist, log error message
-                        Easify_Logging::Log("UpdateProduct(" . $this->easify_key_value . ") - doesn't exist - trying insert");
-                        Easify_Logging::Log("InsertProduct(" . $this->easify_key_value . ")");
+                        Easify_Logging::Log("Easify_Generic_Web_Service.UpdateProduct(" . $this->easify_key_value . ") - doesn't exist - trying insert");
+                        Easify_Logging::Log("Easify_Generic_Web_Service.InsertProduct(" . $this->easify_key_value . ")");
                         $this->shop->InsertProduct($this->easify_key_value);
                     }
 
@@ -249,11 +249,11 @@ abstract class Easify_Generic_Web_Service {
                     // determine if we insert or update the Easify product
                     if (!$this->shop->IsExistingProduct($this->easify_key_value)) {
                         // insert new product 
-                        Easify_Logging::Log("InsertProduct(" . $this->easify_key_value . ")");
+                        Easify_Logging::Log("Easify_Generic_Web_Service.InsertProduct(" . $this->easify_key_value . ")");
                         $this->shop->InsertProduct($this->easify_key_value);
                     } else {
                         // product doesn't exist, log error message
-                        Easify_Logging::Log("InsertProduct(" . $this->easify_key_value . ") - already exists");
+                        Easify_Logging::Log("Easify_Generic_Web_Service.InsertProduct(" . $this->easify_key_value . ") - already exists");
                     }
 
                     break;
@@ -268,7 +268,7 @@ abstract class Easify_Generic_Web_Service {
 
                 case "Modified":
                 case "Added":
-                    Easify_Logging::Log("UpdateProductInfo(" . $this->easify_key_value . ")");
+                    Easify_Logging::Log("Easify_Generic_Web_Service.UpdateProductInfo(" . $this->easify_key_value . ")");
                     $this->shop->UpdateProductInfo($this->easify_key_value);
                     break;
             }
@@ -278,13 +278,13 @@ abstract class Easify_Generic_Web_Service {
         if ($this->easify_entity_name == 'TaxRates') {
             switch ($this->easify_action) {
                 case "Delete":
-                    Easify_Logging::Log("DeleteTaxRate(" . $this->easify_key_value . ")");
+                    Easify_Logging::Log("Easify_Generic_Web_Service.DeleteTaxRate(" . $this->easify_key_value . ")");
                     $this->shop->DeleteTaxRate($this->easify_key_value);
                     break;
 
                 case "Modified":
                 case "Added":
-                    Easify_Logging::Log("UpdateTaxRate(" . $this->easify_key_value . ")");
+                    Easify_Logging::Log("Easify_Generic_Web_Service.UpdateTaxRate(" . $this->easify_key_value . ")");
                     $this->shop->UpdateTaxRate($this->easify_key_value);
                     break;
             }

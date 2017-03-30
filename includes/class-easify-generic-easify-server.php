@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (C) 2017  Easify Ltd (email:support@easify.co.uk)
  * This program is free software; you can redistribute it and/or
@@ -41,12 +42,11 @@ class Easify_Generic_Easify_Server {
         $this->username = $username;
         $this->password = $password;
     }
-    
-    public function UpdateServerUrl($server_url)
-    {
-        $this->server_url = $server_url;        
+
+    public function UpdateServerUrl($server_url) {
+        $this->server_url = $server_url;
     }
-    
+
     private function GetFromEasify($Entity, $Key) {
         if (empty($this->server_url))
             return;
@@ -75,7 +75,6 @@ class Easify_Generic_Easify_Server {
         $xpath = new DOMXpath($document);
 
         // register name spaces
-        //<entry xml:base="https://127.0.0.1:1234/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata">
         $namespaces = array(
             'a' => 'http://www.w3.org/2005/Atom',
             'd' => 'http://schemas.microsoft.com/ado/2007/08/dataservices',
@@ -98,10 +97,10 @@ class Easify_Generic_Easify_Server {
         // HTTPS and BASIC Authentication
         // NB. required to allow self signed certificates
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        
+
         if (version_compare(phpversion(), "7.0.7", ">=")) {
             // CURLOPT_SSL_VERIFYSTATUS is PHP 7.0.7 feature
-            curl_setopt($ch, CURLOPT_SSL_VERIFYSTATUS, false);            
+            curl_setopt($ch, CURLOPT_SSL_VERIFYSTATUS, false);
         }
 
         // do not verify https certificates
@@ -443,11 +442,23 @@ class Easify_Generic_Easify_Server {
         }
 
         return $tax_rates;
-    }    
-    
-    
-    
-    
+    }
+
+    /**
+     * Determines the amount of stock for the specified SKU that has been 
+     * allocated to other orders.
+     * 
+     * @param string $sku
+     * @return string
+     */
+    public function get_allocation_count_by_easify_sku($sku) {
+        // Call a WebGet to get the allocated stock level...
+        $url = $this->server_url . '/Products_Allocated?SKU=' . $sku;
+        $xmlString = $this->GetFromWebService($url);               
+        $xml = simplexml_load_string($xmlString);                   
+        return (string)$xml[0];                            
+    }
+
 }
 
 class ProductDetails {
