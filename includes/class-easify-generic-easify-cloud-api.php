@@ -49,7 +49,7 @@ class Easify_Generic_Easify_Cloud_Api {
         $ch = curl_init();
 
         // Require verification of Easify CloudAPI SSL Cert...
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true); // Set false if debugging aganist self signed cert
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, true); // Set false if debugging aganist self signed cert
         
         

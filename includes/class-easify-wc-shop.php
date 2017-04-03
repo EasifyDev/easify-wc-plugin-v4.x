@@ -56,12 +56,23 @@ class Easify_WC_Shop extends Easify_Generic_Shop {
             // Get product from Easify Server
             $Product = $this->easify_server->GetProductFromEasify($EasifySku);
 
+            if (empty($Product))
+            {
+                Easify_Logging::Log('Easify_WC_Shop.InsertProduct() - Could not get product from Easify Server. Sku:' . $EasifySku);
+            }
+            
             if ($Product->Published == 'false') {
                 Easify_Logging::Log('Easify_WC_Shop.InsertProduct() - Not published, deleting product and not inserting.');
                 $this->DeleteProduct($EasifySku);
                 return;
             }
 
+            if ($Product->Discontinued == 'true') {
+                Easify_Logging::Log('Easify_WC_Shop.InsertProduct() - Discontinued, deleting product and not updating.');
+                $this->DeleteProduct($EasifySku);
+                return;
+            } 
+            
             // calculate price from retail margin and cost price
             $Price = round(($Product->CostPrice / (100 - $Product->RetailMargin) * 100), 4);
 
@@ -143,6 +154,7 @@ class Easify_WC_Shop extends Easify_Generic_Shop {
             update_post_meta($ProductId, '_purchase_note', '');
             update_post_meta($ProductId, '_featured', 'no');
             update_post_meta($ProductId, '_product_attributes', 'a:0:{}'); // no attributes
+            
             // get web info if available
             if ($Product->WebInfoPresent == 'true') {
                 // get the related product info (picture and html description)
@@ -175,6 +187,12 @@ class Easify_WC_Shop extends Easify_Generic_Shop {
                 return;
             }
 
+             if ($Product->Discontinued == 'true') {
+                Easify_Logging::Log('Easify_WC_Shop.UpdateProduct() - Discontinued, deleting product and not updating.');
+                $this->DeleteProduct($EasifySku);
+                return;
+            }           
+            
             // calculate price from retail margin and cost price
             $Price = round(($Product->CostPrice / (100 - $Product->RetailMargin) * 100), 4);
 
@@ -285,7 +303,7 @@ class Easify_WC_Shop extends Easify_Generic_Shop {
 
     public function DeleteProduct($ProductSKU) {
         Easify_Logging::Log("Easify_WC_Shop.DeleteProduct()");
-
+        
         // get the WooCommerce product id by the Easify SKU
         $ProductId = $this->GetWooCommerceProductIdFromEasifySKU($ProductSKU);
         wp_delete_post($ProductId, true);

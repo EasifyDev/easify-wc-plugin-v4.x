@@ -58,7 +58,7 @@ class Easify_WC_Plugin {
      * initialise hooks
      */
     private function initialise_hooks() {
-        Easify_Logging::Log('Easify_WC_Plugin.initialise_hooks()');
+        // Easify_Logging::Log('Easify_WC_Plugin.initialise_hooks()');
         
         // Intercepts incoming web service calls from the Easify Server
         add_action('parse_request', array($this, 'receive_from_easify'));
@@ -84,7 +84,7 @@ class Easify_WC_Plugin {
      * handles incoming Easify requests 
      */
     public function receive_from_easify() {
-        Easify_Logging::Log('Easify_WC_Plugin.receive_from_easify()');
+        // Easify_Logging::Log('Easify_WC_Plugin.receive_from_easify()');
                 
         /* Any requests to /easify or /easify/ will be notifications coming from the Easify Server 
          * i.e. product update notifications. */
