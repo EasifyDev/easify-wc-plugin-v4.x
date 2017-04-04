@@ -1,4 +1,4 @@
-=== Easify V4.x WooCommerce Connector ===
+=== Easify WooCommerce V4 ===
 Contributors: easify
 Donate link: http://www.easify.co.uk/
 Tags: easify, epos, epos software, stock control software, accounting software, invoicing software, small business software, ecommerce, e-commerce, woothemes, wordpress ecommerce, woocommerce, shopping cart
@@ -92,3 +92,6 @@ support@easify.co.uk
 == Changelog ==
 = 4.0 =
 * Initial release for Easify V4.x.
+
+== Upgrade Notice ==
+Initial release.
