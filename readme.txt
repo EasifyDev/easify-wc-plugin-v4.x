@@ -1,4 +1,4 @@
-=== Easify WooCommerce V4 ===
+=== Easify Server WooCommerce ===
 Contributors: easify
 Donate link: http://www.easify.co.uk/
 Tags: easify, epos, epos software, stock control software, accounting software, invoicing software, small business software, ecommerce, e-commerce, woothemes, wordpress ecommerce, woocommerce, shopping cart
@@ -34,7 +34,7 @@ automatically synchronised with your WooCommerce online shop.
 * PHP version 5.2.4 or greater
 * MySQL version 5.0 or greater
 * Some payment gateways require fsockopen support (for IPN access)
-* WooCommerce 2.6.2
+* WooCommerce 2.6.2 or greater
 * Easify V4.39.1 or greater
 
 = Automatic installation =

@@ -19,6 +19,7 @@ require_once ( plugin_dir_path(__FILE__) . '/easify_functions.php' );
 require_once ( 'class-easify-generic-easify-server.php' );
 require_once ( 'class-easify-generic-easify-server-discovery.php' );
 require_once ( 'class-easify-wc-easify-options.php' );
+require_once ( 'class-easify-generic-crypto.php' );
 
 /**
  * This class represents the Easify WooCommerce Plugin Settings page in 
@@ -48,6 +49,8 @@ class Easify_WC__Plugin_Settings_Page {
     private $easify_server;
     private $easify_options;
 
+    private $easify_crypto;
+    
     /**
      * Constructor
      * 
@@ -61,6 +64,8 @@ class Easify_WC__Plugin_Settings_Page {
         // add Easify options menu under WordPress settings menu and wire
         // up callback to build page...
         add_action('admin_menu', array($this, 'add_easify_plugin_page'));
+        
+        $this->easify_crypto = new Easify_Generic_Crypto();
     }
 
     // Add Easify options menu into WordPress
@@ -409,7 +414,7 @@ class Easify_WC__Plugin_Settings_Page {
      */
     public function easify_update_field_easify_password($new_password) {
         // We always encrypt the password before it hits the database...
-        return Encrypt($new_password);
+        return $this->easify_crypto->encrypt($new_password);
     }
 
     /**
@@ -851,7 +856,7 @@ class Easify_WC__Plugin_Settings_Page {
                 if (is_null($this->easify_server)) {
                     // Make sure we have initialised the Easify Server object...
                     $this->easify_server = new Easify_Generic_Easify_Server(
-                            get_option('easify_web_service_location'), get_option('easify_username'), Decrypt(get_option('easify_password')));
+                            get_option('easify_web_service_location'), get_option('easify_username'), $this->easify_crypto->decrypt(get_option('easify_password')));
                 }
 
                 $product = $this->easify_server->GetProductFromEasify($value);
@@ -909,7 +914,7 @@ class Easify_WC__Plugin_Settings_Page {
             if (is_null($this->easify_server)) {
                 // Make sure we have initialised the Easify Server object...
                 $this->easify_server = new Easify_Generic_Easify_Server(
-                        get_option('easify_web_service_location'), get_option('easify_username'), Decrypt(get_option('easify_password')));
+                        get_option('easify_web_service_location'), get_option('easify_username'), $this->easify_crypto->decrypt(get_option('easify_password')));
             }
 
             $product = $this->easify_server->GetProductFromEasify($value);
@@ -1390,7 +1395,7 @@ class Easify_WC__Plugin_Settings_Page {
 
         $easifyPassword = get_option('easify_password');
         if (!empty($easifyPassword)) {
-            $this->options['easify_password'] = Decrypt(get_option('easify_password')); // Decrypt password from DB
+            $this->options['easify_password'] = $this->easify_crypto->decrypt(get_option('easify_password')); // Decrypt password from DB
         }
     }
 

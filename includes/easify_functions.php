@@ -16,7 +16,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-require_once ( plugin_dir_path(__FILE__) . '../lib/defuse-crypto.phar' );
 require_once(ABSPATH . 'wp-admin/includes/file.php');
 
 function SendEmail($Text) {
@@ -50,32 +49,5 @@ function CreateSlug($Name) {
         $ReturnString = $String . $i++;
     }
     return $ReturnString;
-}
-
-use Defuse\Crypto\Crypto;
-use Defuse\Crypto\Key;
-
-function GetKey() {
-    $key_file = get_home_path() . 'esfywc.cfg'; 
-
-    if (file_exists($key_file)) {
-        $keyString = file_get_contents($key_file);
-        return Key::loadFromAsciiSafeString($keyString);
-    } else {
-        $key = Key::createNewRandomKey();
-        file_put_contents($key_file, $key->saveToAsciiSafeString());
-        return $key;
-    }
-}
-
-function Encrypt($String) {
-    $ciphertext = Crypto::encrypt($String, GetKey());
-    return base64_encode($ciphertext);
-}
-
-function Decrypt($string) {
-    $key = GetKey();
-
-    return Crypto::decrypt(base64_decode($string), GetKey());
 }
 ?>
