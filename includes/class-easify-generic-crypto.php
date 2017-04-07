@@ -16,7 +16,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-// http://stackoverflow.com/questions/9262109/simplest-two-way-encryption-using-php
 
 class Easify_Generic_Crypto {
 
