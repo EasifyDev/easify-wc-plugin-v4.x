@@ -34,17 +34,21 @@ require_once( plugin_dir_path(__FILE__) . 'class-easify-generic-crypto.php' );
  *                  the product in WooCommerce.
  * 
  * @class       Easify_WC_Plugin
- * @version     4.0
+ * @version     4.1
  * @package     easify-woocommerce-connector
  * @author      Easify 
  */
 class Easify_WC_Plugin {
     private $easify_crypto;
-    
+           
     /**
      * __construct function.
      */
     public function __construct() {
+                Easify_Logging::Log('Curl version: '. curl_version());
+        $version = curl_version();
+        
+        
         // Check if WooCommerce is activated - if not return without creating the hooks...
         if (!in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_option('active_plugins')))) {
             return;
@@ -88,15 +92,17 @@ class Easify_WC_Plugin {
      * handles incoming Easify requests 
      */
     public function receive_from_easify() {
-        // Easify_Logging::Log('Easify_WC_Plugin.receive_from_easify()');
+         Easify_Logging::Log('Easify_WC_Plugin.receive_from_easify() ' . $_SERVER["REQUEST_URI"]);
                 
         /* Any requests to /easify or /easify/ will be notifications coming from the Easify Server 
          * i.e. product update notifications. */
         if (!$_SERVER["REQUEST_URI"]) {
             return;
         }
-
-        if (strtolower($_SERVER["REQUEST_URI"]) != '/easify' && strtolower($_SERVER["REQUEST_URI"]) != '/easify/') {
+                        
+        // Make sure URI ends with /easify or /easify/
+        $request_uri = strtolower($_SERVER["REQUEST_URI"]);       
+        if ( (!(substr($request_uri, -strlen( '/easify' ) ) == '/easify') == true) && (!(substr($request_uri, -strlen( '/easify/' ) ) == '/easify/') == true) ) {
             // Request is not to /easify so return
             return;
         }

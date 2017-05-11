@@ -16,13 +16,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+require_once( 'includes/class-easify-generic-basic-auth.php' );
+
 /**
  * Easify WooCommerce Connector Uninstall
  *
  * Uninstalls Easify WooCommerce Connector options
  *
  * @author      Easify
- * @version     4.0
+ * @version     4.1
  */
 if( !defined('ABSPATH') && !defined('WP_UNINSTALL_PLUGIN') )
     exit();
@@ -31,3 +33,7 @@ global $wpdb;
 
 // Delete options
 $wpdb->query( "DELETE FROM " . $wpdb->options . " WHERE option_name LIKE 'easify_%'" );
+
+// Remove basic auth info from .htaccess
+$basic_auth = new Easify_Generic_Basic_Auth();
+$basic_auth->deactivate();

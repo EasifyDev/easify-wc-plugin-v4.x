@@ -16,6 +16,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+require_once( 'class-easify-generic-basic-auth.php' );
+
 /**
  * Handles activation of the Easify WooCommerce Plugin
  * 
@@ -49,6 +51,10 @@ class Easify_WC_Activation{
      * database options are in the database...
      */
     public function activate(){
+        // Add basic auth info to .htaccess
+        $basic_auth = new Easify_Generic_Basic_Auth();
+        $basic_auth->activate();
+        
         /* If Orders Options not present - create them. Note: we don't want to 
          * overwrite them in case the plugin was temporarily deactivated then 
          * re-activated */

@@ -17,6 +17,7 @@
  */
 
 require_once( 'class-easify-generic-logging.php' );
+require_once( 'class-easify-generic-basic-auth.php' );
 
 /**
  * A class that implements an Easify web service to receive notifications from 
@@ -40,7 +41,7 @@ require_once( 'class-easify-generic-logging.php' );
  * WooCommerce shop.
  * 
  * @class       Easify_Generic_Web_Service
- * @version     4.0
+ * @version     4.1
  * @package     easify-woocommerce-connector
  * @author      Easify 
  */
@@ -58,6 +59,7 @@ abstract class Easify_Generic_Web_Service {
     private $easify_pk;
     private $pk;
     protected $easify_server_url;    
+    private $basic_auth;
 
     /**
      * Class constructor
@@ -72,6 +74,7 @@ abstract class Easify_Generic_Web_Service {
         $this->password = $password;
         $this->pk = $pk;
         $this->easify_server_url = $easify_server_url;
+        $this->basic_auth = new Easify_Generic_Basic_Auth();
     }
 
     /**
@@ -151,27 +154,29 @@ abstract class Easify_Generic_Web_Service {
              * This is the Easify Subscription username and password. It is entered in the 
              * Easify ECommerce Channel manager and is passed using basic http authentication
              * with the incoming notification. */
-            if (isset($_SERVER['PHP_AUTH_USER'])) {
-                // Authenticate user...
-                if ($_SERVER['PHP_AUTH_USER'] != $this->username || $_SERVER['PHP_AUTH_PW'] != $this->password) {
-                    // Username or password doesn't match - return 403 error
-                    Easify_Logging::Log("Incoming notification from Easify Server - invalid username or password. " .
-                            "Check that the username and password for the Easify Subscription has been correctly " .
-                            "entered in both the Easify ECommerce Channel Manager in Easify pro, and also in the " .
-                            "settings page of the Easify plugin.");
-                    header('HTTP/1.0 403 Forbidden');
-                    echo 'Invalid username or password.';
-                    return false;
-                }
-            } else {
+     
+            // Make sure we have credentials from header
+            if (!isset($this->basic_auth->username) || !isset($this->basic_auth->password)) {
                 // PHP Auth not found - return 403 error
-                Easify_Logging::Log("Incoming notification from Easify Server - could not get authentication values. " .
-                        "Check that the username and password for the Easify Subscription has been correctly " .
-                        "entered in the Easify ECommerce Channel Manager in Easify pro.");
+                Easify_Logging::Log("Incoming notification from Easify Server - could not get HTTP Basic Authentication values from http header. " .
+                        "Make sure that PHP Basic Authentication is enabled for your website, and that your website is not set to run in PHP Safe Mode." .                        
+                        "Also ensure that the appropriate re-write rules are present in .htaccess.");
                 header('HTTP/1.0 403 Forbidden');
                 echo 'Could not get authentication values.';
                 return false;
-            }
+            }             
+            
+            // Authenticate user...                  
+            if ($this->basic_auth->username != $this->username || $this->basic_auth->password != $this->password) {                              
+                // Username or password doesn't match - return 403 error                    
+                Easify_Logging::Log("Incoming notification from Easify Server - invalid username or password. " .
+                        "Check that the username and password for the Easify Subscription has been correctly " .
+                        "entered in both the Easify ECommerce Channel Manager in Easify pro, and also in the " .
+                        "settings page of the Easify plugin.");
+                header('HTTP/1.0 403 Forbidden');
+                echo 'Invalid username or password.';
+                return false;
+            }                        
         }
 
         // Check the PK if it was provided (not used in Easify WooCommerce plugin)...
