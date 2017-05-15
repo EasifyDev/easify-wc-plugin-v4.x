@@ -34,7 +34,7 @@ require_once( plugin_dir_path(__FILE__) . 'class-easify-generic-crypto.php' );
  *                  the product in WooCommerce.
  * 
  * @class       Easify_WC_Plugin
- * @version     4.1
+ * @version     4.2
  * @package     easify-woocommerce-connector
  * @author      Easify 
  */
@@ -45,10 +45,6 @@ class Easify_WC_Plugin {
      * __construct function.
      */
     public function __construct() {
-                Easify_Logging::Log('Curl version: '. curl_version());
-        $version = curl_version();
-        
-        
         // Check if WooCommerce is activated - if not return without creating the hooks...
         if (!in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_option('active_plugins')))) {
             return;
