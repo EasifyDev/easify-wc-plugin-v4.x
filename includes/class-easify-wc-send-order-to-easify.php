@@ -30,7 +30,7 @@ require_once ( 'class-easify-wc-woocommerce-order.php' );
  * be queued for delivery to the relevant Easify Server.
  * 
  * @class       Easify_WC_Send_Order_To_Easify
- * @version     4.0
+ * @version     4.4
  * @package     easify-woocommerce-connector
  * @author      Easify 
  */
@@ -302,6 +302,9 @@ class Easify_WC_Send_Order_To_Easify {
         foreach ($this->woocommerce_order->shipping_methods as $woocommerce_shipping) {
             // If shipping has been expanded to include different instances, extract shipping method
             $wocommerce_shipping_method = $woocommerce_shipping['method_id'];
+            
+            Easify_Logging::Log('Easify_WC_Send_Order_To_Easify.do_shipping() $wocommerce_shipping_method: ' . $wocommerce_shipping_method);
+            
             if (strpos($wocommerce_shipping_method, ":") !== false) {
                 $wocommerce_shipping_method = explode(":", $wocommerce_shipping_method)[0];
             }

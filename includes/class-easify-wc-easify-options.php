@@ -22,7 +22,7 @@ require_once( 'easify-generic-constants.php' );
  * Provides easy access to the Easify options that are stored in WordPress
  * 
  * @class       Easify_WC_Easify_Options
- * @version     4.0
+ * @version     4.4
  * @package     easify-woocommerce-connector
  * @author      Easify 
  */
@@ -231,11 +231,12 @@ class Easify_WC_Easify_Options {
         }
 
         // Iterate each Easify shipping method mapping to see if we can find the method we are after
-        foreach ($this->shipping_options['easify_shipping_mapping'] as $easify_shipping_method_name => $easify_sku) {
+        foreach ($this->shipping_options['easify_shipping_mapping'] as $easify_shipping_method_name => $easify_sku) {            
+            Easify_Logging::Log("Easify_WC_Easify_Options::get_easify_shipping_method_sku_by_name found method name: " . $easify_shipping_method_name);
+            
             if ($easify_shipping_method_name == $shipping_method_name) {
                 if (empty($easify_sku)) {
                     // If no Easify SKU set, return sentinel (sku not found)
-                    Easify_Logging::Log("Easify_WC_Easify_Options::get_easify_shipping_method_sku_by_name Delivery SKU not set for " . $easify_shipping_method_name . ", skipping");
                     return ERROR_EASIFY_SHIPPING_SKU_NOT_FOUND;
                 }
 
@@ -243,6 +244,23 @@ class Easify_WC_Easify_Options {
                 return $easify_sku;
             }
         }
+        
+        // If we get here, we have an unknown shipping method. Return the defauly shipping method...
+        Easify_Logging::Log("Easify_WC_Easify_Options::get_easify_shipping_method_sku_by_name - Unknown WooCommerce shipping method, returning default. WooCommerce Shipping Method: " . $shipping_method_name);      
+   
+        // Iterate each Easify shipping method mapping to see if we can find the default method...
+        foreach ($this->shipping_options['easify_shipping_mapping'] as $easify_shipping_method_name => $easify_sku) {            
+            if ($easify_shipping_method_name == 'default') {
+                if (empty($easify_sku)) {
+                    // If no Easify SKU set, return sentinel (sku not found)
+                    Easify_Logging::Log('Easify_WC_Easify_Options::get_easify_shipping_method_sku_by_name Delivery SKU not set for "default", skipping');
+                    return ERROR_EASIFY_SHIPPING_SKU_NOT_FOUND;
+                }
+
+                // Sku found in shipping mappings, return it.
+                return $easify_sku;
+            }
+        }        
     }
 
     /**
