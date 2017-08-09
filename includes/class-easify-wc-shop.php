@@ -635,6 +635,14 @@ class Easify_WC_Shop extends Easify_Generic_Shop {
         try {
             Easify_Logging::Log("Easify_WC_Shop.UpdateProductInfoInDatabase()");
 
+            // get WooCommerce product id from Easify SKU
+            $ProductId = $this->GetWooCommerceProductIdFromEasifySKU($ProductSKU);
+
+            // Delete old picture, if one exists. do this before we save the image to disk
+            // otherwise DeleteProductAttachement() will delete the image we just uploaded...
+            $this->DeleteProductAttachement($ProductId);
+            
+            
             // get WordPress current image upload path
             $arr = wp_upload_dir();
             $ImageDirectory = $arr['path'] . '/';
@@ -650,12 +658,6 @@ class Easify_WC_Shop extends Easify_Generic_Shop {
             $fp = fopen($FileName, "w");
             fwrite($fp, $ByteArray);
             fclose($fp);
-
-            // get WooCommerce product id from Easify SKU
-            $ProductId = $this->GetWooCommerceProductIdFromEasifySKU($ProductSKU);
-
-            // delete old picture, if one exists
-            $this->DeleteProductAttachement($ProductId);
 
             // get the file type of the image we've just uploaded
             $FileType = wp_check_filetype(basename($FileName), null);
@@ -705,26 +707,55 @@ class Easify_WC_Shop extends Easify_Generic_Shop {
         }
     }
 
+    /**
+     * When a product image is uploaded or updated, Wordpress will create a new 
+     * post for the image. Here we make sure that before Wordpress creates a new 
+     * image post, we delete the old image along with its thumbnail and meta
+     * data.
+     * 
+     * @param type $ProductId
+     */    
     private function DeleteProductAttachement($ProductId) {
-        //TODO: Dont know why this was commented out???
-        // delete post attachment
-        // wp_delete_attachment($ProductId, true);
-        // delete_post_thumbnail($ProductId);
-        // $this->DeleteProductChildren($ProductId);
+        Easify_Logging::Log("Easify_WC_Shop.DeleteProductAttachement()");
+                     
+        $this->DeleteProductChildren($ProductId);
     }
 
+    /**
+     * Deletes all the child posts of the specified parent ($ProductId) and 
+     * also deletes all the associated metadata.
+     * 
+     * @global type $wpdb
+     * @param type $ProductId
+     */
     private function DeleteProductChildren($ProductId) {
-        Easify_Logging::Log("Easify_WC_Shop.DeleteProductChildren()");
+        Easify_Logging::Log("Easify_WC_Shop.DeleteProductChildren() - ProductId: ". $ProductId);
 
         global $wpdb;
-        $ids = $wpdb->get_results("SELECT post_id FROM " . $wpdb->posts . " WHERE post_parent = '" . $ProductId . "'");
-
+        // Product images are stored as posts. Get a list of images that have the product post
+        // as their parent. Should only be one ordinarily which is the current product image.
+        $ids = $wpdb->get_results("SELECT ID FROM " . $wpdb->posts . " WHERE post_parent = '" . $ProductId . "'");
+              
         if (isset($ids)) {
+            // We got some child posts to the parent (product post)
+            Easify_Logging::Log("ids array:"); 
+            Easify_Logging::Log($ids);
+            
+            // Count how many child posts there are
+            $count = count($ids);
+             Easify_Logging::Log("Easify_WC_Shop.DeleteProductChildren() - Count: " . $count);           
+            
+            // Delete each child post. each child post is a product image. Usually there will only 
+            // be one child image, but we will delete them all in case there are multiple children here.
             foreach ($ids as $key) {
-                wp_delete_post($key->post_id, true);
+                Easify_Logging::Log("Easify_WC_Shop.DeleteProductChildren() - Deleting post for Id: " . $key->ID);
+            
+                // Delete the post (this is the product image)
+                wp_delete_post($key->ID, true);
 
-                delete_post_meta($key->post_id, '_wp_attached_file');
-                delete_post_meta($key->post_id, '_wp_attachment_metadata');
+                // And delete the meta data that appears to link the product to its thumbnails.
+                delete_post_meta($key->ID, '_wp_attached_file');
+                delete_post_meta($key->ID, '_wp_attachment_metadata');
             }
         }
     }
