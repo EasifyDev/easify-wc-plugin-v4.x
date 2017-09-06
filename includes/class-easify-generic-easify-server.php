@@ -88,7 +88,15 @@ class Easify_Generic_Easify_Server {
         // return navigatable xml result
         return $xpath;
     }
-
+/**
+ * DEPRECATED
+ * 
+ * Being replaced with GetFromEasifyServer() which uses JSON instead of XML
+ * 
+ * @param type $Url
+ * @return string
+ * @throws Exception
+ */
     private function GetFromWebService($Url) {
         // initialise PHP CURL for HTTP GET action
         $ch = curl_init();
@@ -131,98 +139,116 @@ class Easify_Generic_Easify_Server {
 
         return $result;
     }
+    
+    /**
+     * Gets a JSON response from the specified Easify Server...
+     * 
+     * If you want to send an order to an Easify Server, use the Easify Cloud
+     * API Server (See Easify_WC_Send_Order_To_Easify()).
+     * 
+     * @param type $url
+     * @return string
+     * @throws Exception
+     */
+    private function GetFromEasifyServer($url) {
+        Easify_Logging::Log("Easify_Generic_Easify_Server.GetFromEasifyServer()");
+                            
+        // initialise PHP CURL for HTTP GET action
+        $ch = curl_init();
 
+        // Specify JSON to an Easify Server and it will return JSON instead of 
+        // XML.
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+            'Content-Type: application/json',
+            'Accept: application/json'
+        ));
+        
+        // setting up coms to an Easify Server 
+        // HTTPS and BASIC Authentication
+        // NB. required to allow self signed certificates
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+
+        if (version_compare(phpversion(), "7.0.7", ">=")) {
+            // CURLOPT_SSL_VERIFYSTATUS is PHP 7.0.7 feature
+            // TODO: Also need to ensure CURL is V7.41.0 or later!
+            //curl_setopt($ch, CURLOPT_SSL_VERIFYSTATUS, false);
+        }
+
+        // do not verify https certificates
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+        // if https is set, user basic authentication
+        curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+        curl_setopt($ch, CURLOPT_USERPWD, "$this->username:$this->password");
+
+        // server URL 
+        curl_setopt($ch, CURLOPT_URL, $url);
+        // return result or GET action
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        // set timeout
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, EASIFY_TIMEOUT);
+
+        // send GET request to server, capture result
+        $result = curl_exec($ch);
+
+        // record any errors
+        if (curl_error($ch)) {
+            $result = 'error:' . curl_error($ch);
+            Easify_Logging::Log($result);
+            throw new Exception($result);
+        }
+
+        curl_close($ch);
+
+        return $result;
+    }
+
+    private function GetJsonFromEasifyServer($entity, $key) {
+        Easify_Logging::Log("Easify_Generic_Easify_Server.GetJsonFromEasifyServer() - Entity: " . $entity . " Key: " . $key);
+                    
+        if (empty($this->server_url))
+            return;
+
+        if ($key == null) {
+            $url = $this->server_url . "/" . $entity;
+        } else {
+            $url = $this->server_url . "/" . $entity . '(' . $key . ')';
+        }
+
+        $ret = $this->GetFromEasifyServer($url, true);
+        return $ret;
+    }
+    
+    /**
+     * Try to pull a sentinel product from the Easify Server to see if we can #
+     * communicate with it...
+     * 
+     * @return boolean
+     */
     public function HaveComsWithEasify() {
         try {
-            $xpath = $this->GetFromEasify("Products", "-100");
-
-            if (empty($xpath))
-                return false;
-
-            $Sku = $xpath->evaluate('string(/a:entry/a:content/m:properties/d:SKU)');
-
-            return $Sku == "-100";
+            Easify_Logging::Log("Easify_Generic_Easify_Server.HaveComsWithEasify()"); 
+            
+            // Get sentinel product from Easify Server
+            $product = new ProductDetails($this->GetJsonFromEasifyServer("Products", "-100"));                       
+            
+            // See if the product we got has the data we expect
+            return $product->SKU == "-100";            
         } catch (Exception $e) {
             Easify_Logging::Log($e);
             return false;
         }
     }
 
+    /**
+     * To get NetBeans autocomplete to work add the following comment anywhere
+     * before this method is called:
+     *      @var $product ProductDetails   
+     *    
+     * @param type $EasifySku
+     * @return ProductDetails
+     */
     public function GetProductFromEasify($EasifySku) {
-
-        $xpath = $this->GetFromEasify("Products", $EasifySku);
-
-        if ($xpath == null)
-            return;
-
-        $Sku = $xpath->evaluate('string(/a:entry/a:content/m:properties/d:SKU)');
-        $Description = $xpath->evaluate('string(/a:entry/a:content/m:properties/d:Description)');
-        $CategoryId = $xpath->evaluate('string(/a:entry/a:content/m:properties/d:CategoryId)');
-        $SubcategoryId = $xpath->evaluate('string(/a:entry/a:content/m:properties/d:SubcategoryId)');
-        $OurStockCode = $xpath->evaluate('string(/a:entry/a:content/m:properties/d:OurStockCode)');
-        $EANCode = $xpath->evaluate('string(/a:entry/a:content/m:properties/d:EANCode)');
-        $ManufacturerStockCode = $xpath->evaluate('string(/a:entry/a:content/m:properties/d:ManufacturerStockCode)');
-        $SupplierStockCode = $xpath->evaluate('string(/a:entry/a:content/m:properties/d:SupplierStockCode)');
-        $ManufacturerId = $xpath->evaluate('string(/a:entry/a:content/m:properties/d:ManufacturerId)');
-        $CostPrice = $xpath->evaluate('string(/a:entry/a:content/m:properties/d:CostPrice)');
-        $Markup = $xpath->evaluate('string(/a:entry/a:content/m:properties/d:Markup)');
-        $Comments = $xpath->evaluate('string(/a:entry/a:content/m:properties/d:Comments)');
-        $StockLevel = $xpath->evaluate('string(/a:entry/a:content/m:properties/d:StockLevel)');
-        $Discontinued = $xpath->evaluate('string(/a:entry/a:content/m:properties/d:Discontinued)');
-        $PriceChangeDate = $xpath->evaluate('string(/a:entry/a:content/m:properties/d:PriceChangeDate)');
-        $MinStockLevel = $xpath->evaluate('string(/a:entry/a:content/m:properties/d:MinStockLevel)');
-        $ReorderQty = $xpath->evaluate('string(/a:entry/a:content/m:properties/d:ReorderQty)');
-        $ReorderWhenLow = $xpath->evaluate('string(/a:entry/a:content/m:properties/d:ReorderWhenLow)');
-        $SupplierId = $xpath->evaluate('string(/a:entry/a:content/m:properties/d:SupplierId)');
-        $RetailMargin = $xpath->evaluate('string(/a:entry/a:content/m:properties/d:RetailMargin)');
-        $TradeMargin = $xpath->evaluate('string(/a:entry/a:content/m:properties/d:TradeMargin)');
-        $TaxId = $xpath->evaluate('string(/a:entry/a:content/m:properties/d:TaxId)');
-        $LastStockCheckDate = $xpath->evaluate('string(/a:entry/a:content/m:properties/d:LastStockCheckDate)');
-        $Published = $xpath->evaluate('string(/a:entry/a:content/m:properties/d:Published)');
-        $Allocatable = $xpath->evaluate('string(/a:entry/a:content/m:properties/d:Allocatable)');
-        $LoyaltyPoints = $xpath->evaluate('string(/a:entry/a:content/m:properties/d:LoyaltyPoints)');
-        $Weight = $xpath->evaluate('string(/a:entry/a:content/m:properties/d:Weight)');
-        $ItemTypeId = $xpath->evaluate('string(/a:entry/a:content/m:properties/d:ItemTypeId)');
-        $LocationId = $xpath->evaluate('string(/a:entry/a:content/m:properties/d:LocationId)');
-        $DiscontinueWhenDepleted = $xpath->evaluate('string(/a:entry/a:content/m:properties/d:DiscontinueWhenDepleted)');
-        $DateAddedToEasify = $xpath->evaluate('string(/a:entry/a:content/m:properties/d:DateAddedToEasify)');
-        $WebInfoPresent = $xpath->evaluate('string(/a:entry/a:content/m:properties/d:WebInfoPresent)');
-
-        $product = new ProductDetails();
-        $product->SKU = $Sku;
-        $product->Description = $Description;
-        $product->CategoryId = $CategoryId;
-        $product->SubcategoryId = $SubcategoryId;
-        $product->OurStockCode = $OurStockCode;
-        $product->EANCode = $EANCode;
-        $product->ManufacturerStockCode = $ManufacturerStockCode;
-        $product->SupplierStockCode = $SupplierStockCode;
-        $product->ManufacturerId = $ManufacturerId;
-        $product->CostPrice = $CostPrice;
-        $product->Markup = $Markup;
-        $product->Comments = $Comments;
-        $product->StockLevel = $StockLevel;
-        $product->Discontinued = $Discontinued;
-        $product->DatePriceLastChanged = $PriceChangeDate;
-        $product->MinimumStockLevel = $MinStockLevel;
-        $product->ReorderAmount = $ReorderQty;
-        $product->ReorderWhenLow = $ReorderWhenLow;
-        $product->SupplierId = $SupplierId;
-        $product->RetailMargin = $RetailMargin;
-        $product->TradeMargin = $TradeMargin;
-        $product->TaxId = $TaxId;
-        $product->DateStockLevelLastUpdated = $LastStockCheckDate;
-        $product->Published = $Published;
-        $product->Allocatable = $Allocatable;
-        $product->LoyaltyPoints = $LoyaltyPoints;
-        $product->Weight = $Weight;
-        $product->ItemTypeId = $ItemTypeId;
-        $product->LocationId = $LocationId;
-        $product->DiscontinueWhenDepleted = $DiscontinueWhenDepleted;
-        $product->DateAdded = $DateAddedToEasify;
-        $product->WebInfoPresent = $WebInfoPresent;
-
-        return $product;
+        return new ProductDetails($this->GetJsonFromEasifyServer("Products", $EasifySku));        
     }
 
     public function GetEasifyProductCategories() {
@@ -463,36 +489,65 @@ class Easify_Generic_Easify_Server {
 }
 
 class ProductDetails {
+/**
+ * The constructor takes in a serialised JSON object, and de-serialises it into
+ * the properties of this class.
+ * 
+ * Make sure that the property names in this class map exactly to the property
+ * names in the JSON object, otherwise you'll get blank values where you 
+ * expect values.
+ * 
+ * @param type $json
+ */
+    function __construct($json) {
+        // Initialise class based on passed in json...
+        $json = json_decode($json);
 
+        // Here we iterate each property in the JSON and map it into the 
+        // corresponding property of this class.
+        foreach ($json as $key => $value) {
+            if (!property_exists($this, $key)) continue;
+
+            $this->{$key} = $value;
+        }
+    }
+    
     public $SKU; // Integer
+    public $Description; // String   
+    public $CategoryId; // Int     
+    public $SubcategoryId; // Int       
     public $OurStockCode; // String
+    public $EANCode; // String            
     public $ManufacturerStockCode; // String
     public $SupplierStockCode; // String
-    public $EANCode; // String
-    public $Description; // String
-    public $CategoryId; // Int
-    public $SubcategoryId; // Int
     public $ManufacturerId; // Int
     public $CostPrice; // Decimal
-    public $Notes; // String
+    public $Markup; // Decimal    
+    public $Comments; // String        
     public $StockLevel; // Int
     public $Discontinued; // Boolean
-    public $MinimumStockLevel; // Int
-    public $ReorderAmount; // Int
+    public $PriceChangeDate; // DateTime            
+    public $MinStockLevel; // Int            
+    public $ReorderQty; // Int
     public $ReorderWhenLow; // Boolean
-    public $DateStockLevelLastUpdated; // DateTime
-    public $DatePriceLastChanged; // DateTime
-    public $SupplierId; // Int
+    public $SupplierId; // Int    
     public $RetailMargin; // Double
     public $TradeMargin; // Double
-    public $TaxId; // Int
+    public $TaxId; // Int       
+    public $LastStockCheckDate; // DateTime
     public $Published; // Boolean
     public $Allocatable; // Boolean
-    public $Picture; // String
-    public $HTMLDescription; // String
-    Public $Weight; // Double
-    Public $DateAdded; // DateTime
-
+    public $LoyaltyPoints; // Int   
+    Public $Weight; // Double    
+    public $ItemTypeId; // Int    
+    public $LocationId; // Int    
+    public $DiscontinueWhenDepleted; // Boolean      
+    Public $DateAddedToEasify; // DateTime
+    public $WebInfoPresent; // Boolean            
+    Public $Tags; // String
+    Public $ConditionId; // Int
+    Public $ConditionDescription; // String
+    public $UseSecondHandVat; // Boolean         
 }
 
 ?>

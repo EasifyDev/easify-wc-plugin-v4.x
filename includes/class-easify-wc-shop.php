@@ -49,19 +49,24 @@ class Easify_WC_Shop extends Easify_Generic_Shop {
         }
     }
 
+
     public function InsertProduct($EasifySku) {
         try {
+            /* Autocomplete hints... */  
+            /* @var $Product ProductDetails */           
+            
             Easify_Logging::Log('Easify_WC_Shop.InsertProduct()');
-
+                      
             // Get product from Easify Server
-            $Product = $this->easify_server->GetProductFromEasify($EasifySku);
+
+            $Product = $this->easify_server->GetProductFromEasify($EasifySku);                                                          
 
             if (empty($Product))
             {
                 Easify_Logging::Log('Easify_WC_Shop.InsertProduct() - Could not get product from Easify Server. Sku:' . $EasifySku);
             }
             
-            if ($Product->Published == 'false') {
+            if ($Product->Published == FALSE) {
                 Easify_Logging::Log('Easify_WC_Shop.InsertProduct() - Not published, deleting product and not inserting.');
                 $this->DeleteProduct($EasifySku);
                 return;
@@ -164,6 +169,13 @@ class Easify_WC_Shop extends Easify_Generic_Shop {
                 $this->UpdateProductInfoInDatabase($EasifySku, $ProductInfo['Image'], $ProductInfo['Description']);
             }
 
+            // Add tags if present...
+            if (!empty($Product->Tags))
+            {
+                Easify_Logging::Log("Easify_WC_Shop.InsertProduct() - Adding Tags: " . $Product->Tags);
+                wp_set_object_terms($ProductId, explode(',', $Product->Tags), 'product_tag');
+            }
+            
             Easify_Logging::Log("Easify_WC_Shop.InsertProduct() - End");
         } catch (Exception $e) {
             Easify_Logging::Log("Easify_WC_Shop->InsertProductIntoDatabase Exception: " . $e->getMessage());
@@ -173,15 +185,17 @@ class Easify_WC_Shop extends Easify_Generic_Shop {
 
     public function UpdateProduct($EasifySku) {
         try {
+            /* Autocomplete hints... */  
+            /* @var $Product ProductDetails */                   
             Easify_Logging::Log('Easify_WC_Shop.UpdateProduct()');
             // get product
             if (empty($this->easify_server)) {
                 Easify_Logging::Log("Easify_WC_Shop.UpdateProduct() - Easify Server is NULL");
             }
-
+ 
             $Product = $this->easify_server->GetProductFromEasify($EasifySku);
             
-            if ($Product->Published == 'false') {
+            if ($Product->Published == FALSE) {
                 Easify_Logging::Log('Easify_WC_Shop.UpdateProduct() - Not published, deleting product and not updating.');
                 $this->DeleteProduct($EasifySku);
                 return;
@@ -294,6 +308,14 @@ class Easify_WC_Shop extends Easify_Generic_Shop {
                 $this->UpdateProductInfoInDatabase($EasifySku, $ProductInfo['Image'], $ProductInfo['Description']);
             }
 
+            // Update tags if present...
+            if (!empty($Product->Tags))
+            {
+                Easify_Logging::Log("Easify_WC_Shop.UpdateProduct() - Adding Tags: " . $Product->Tags);                
+                wp_set_object_terms($ProductId, explode(',', $Product->Tags), 'product_tag');
+            }
+            
+            
             Easify_Logging::Log("Easify_WC_Shop.UpdateProduct() - End.");
         } catch (Exception $e) {
             Easify_Logging::Log("Easify_WC_Shop->UpdateProductInDatabase Exception: " . $e->getMessage());
@@ -306,6 +328,21 @@ class Easify_WC_Shop extends Easify_Generic_Shop {
         
         // get the WooCommerce product id by the Easify SKU
         $ProductId = $this->GetWooCommerceProductIdFromEasifySKU($ProductSKU);
+        
+        if (empty($ProductId))
+        {
+            Easify_Logging::Log("Easify_WC_Shop.DeleteProduct() - Product not found in WooCommerce, nothing to delete.");
+            return;
+        }
+        
+        Easify_Logging::Log("Easify_WC_Shop.DeleteProduct() - Deleting product (post id): " . $ProductId);
+        
+        // Delete product images
+	Easify_Logging::Log("Easify_WC_Shop.DeleteProduct() - Deleting Product Images.");
+        $this->DeleteProductAttachement($ProductId);
+        
+        // Delete the product
+	Easify_Logging::Log("Easify_WC_Shop.DeleteProduct() - Deleting Product.");
         wp_delete_post($ProductId, true);
 
         Easify_Logging::Log("Easify_WC_Shop.DeleteProduct() - End");
@@ -313,12 +350,15 @@ class Easify_WC_Shop extends Easify_Generic_Shop {
 
     public function UpdateProductInfo($EasifySku) {
         try {
+            /* Autocomplete hints... */  
+            /* @var $Product ProductDetails */       
+            
             Easify_Logging::Log("Easify_WC_Shop.UpdateProductInfo()");
 
             // get product from Easify Server
             $Product = $this->easify_server->GetProductFromEasify($EasifySku);
 
-            if ($Product->Published == 'false') {
+            if ($Product->Published == FALSE) {
                 Easify_Logging::Log('Easify_WC_Shop.UpdateProductInfo() - Not published, deleting product and not updating info.');
                 $this->DeleteProduct($EasifySku);
                 return;
@@ -715,9 +755,15 @@ class Easify_WC_Shop extends Easify_Generic_Shop {
      * 
      * @param type $ProductId
      */    
-    private function DeleteProductAttachement($ProductId) {
+    private function DeleteProductAttachement($ProductId) {               
         Easify_Logging::Log("Easify_WC_Shop.DeleteProductAttachement()");
                      
+        if (empty($ProductId))
+        {
+            Easify_Logging::Log("Easify_WC_Shop.DeleteProductAttachement() - ProductId is empty, nothign to delete.");
+            return;
+        }
+        
         $this->DeleteProductChildren($ProductId);
     }
 
@@ -743,7 +789,7 @@ class Easify_WC_Shop extends Easify_Generic_Shop {
             
             // Count how many child posts there are
             $count = count($ids);
-             Easify_Logging::Log("Easify_WC_Shop.DeleteProductChildren() - Count: " . $count);           
+            Easify_Logging::Log("Easify_WC_Shop.DeleteProductChildren() - Count: " . $count);           
             
             // Delete each child post. each child post is a product image. Usually there will only 
             // be one child image, but we will delete them all in case there are multiple children here.

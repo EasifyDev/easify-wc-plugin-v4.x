@@ -859,7 +859,7 @@ class Easify_WC__Plugin_Settings_Page {
                             get_option('easify_web_service_location'), get_option('easify_username'), $this->easify_crypto->decrypt(get_option('easify_password')));
                 }
 
-                $product = $this->easify_server->GetProductFromEasify($value);
+                $product = $this->easify_server->GetProductFromEasifyServer($value);
 
                 // If SKU not found in Easify Server, warn the user and don't save the value to the database
                 if (empty($product->SKU)) {
@@ -891,6 +891,9 @@ class Easify_WC__Plugin_Settings_Page {
      * @return object
      */
     public function validate_discount_mapping($input) {
+        /* Autocomplete hints... */  
+        /* @var $product ProductDetails */       
+        
         $value = $input['easify_discount_sku'];
 
         // If value not null then validate that SKU exists in Easify...
@@ -917,7 +920,7 @@ class Easify_WC__Plugin_Settings_Page {
                         get_option('easify_web_service_location'), get_option('easify_username'), $this->easify_crypto->decrypt(get_option('easify_password')));
             }
 
-            $product = $this->easify_server->GetProductFromEasify($value);
+            $product = $this->easify_server->GetProductFromEasifyServer($value);
 
             // If SKU not found in Easify Server, warn the user and don't save the value to the database
             if (empty($product->SKU)) {

@@ -231,6 +231,10 @@ class Easify_WC_Send_Order_To_Easify {
             $easify_order_detail->Qty = $woocommerce_product['qty'];
             $easify_order_detail->Price = round($woocommerce_product['line_subtotal'] / ($woocommerce_product['qty'] == 0 ? 1 : $woocommerce_product['qty']), 4);
             $easify_order_detail->Comments = '';
+            
+            /* TODO: Determine tax class based on WooCommerce settings i.e. Tax Class based on delivery address, or billing address,
+             * and lookup appropriate Easify tax id and rate to use. E.g. if GB country code for tax class then 
+             * just use usual tax rate. Else if other country code or * then lookup relevant tax code...  */
             $easify_order_detail->TaxId = $this->easify_options->get_easify_tax_id_by_code($woocommerce_product['tax_class']);
             $easify_order_detail->TaxRate = $this->easify_options->get_easify_tax_rate_by_code($woocommerce_product['tax_class']);
             $easify_order_detail->Spare = '';
