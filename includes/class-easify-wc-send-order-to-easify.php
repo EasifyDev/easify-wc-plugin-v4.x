@@ -30,7 +30,7 @@ require_once ( 'class-easify-wc-woocommerce-order.php' );
  * be queued for delivery to the relevant Easify Server.
  * 
  * @class       Easify_WC_Send_Order_To_Easify
- * @version     4.4
+ * @version     4.5
  * @package     easify-woocommerce-connector
  * @author      Easify 
  */

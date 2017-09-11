@@ -43,7 +43,7 @@ require_once( plugin_dir_path(__FILE__) . 'class-easify-generic-crypto.php' );
  *                  the product in WooCommerce.
  * 
  * @class       Easify_WC_Plugin
- * @version     4.2
+ * @version     4.5
  * @package     easify-woocommerce-connector
  * @author      Easify 
  */

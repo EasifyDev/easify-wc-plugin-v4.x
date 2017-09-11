@@ -29,7 +29,7 @@ require_once ( 'class-easify-generic-crypto.php' );
  * updates to the settings and validation.
  * 
  * @class       Easify_WC__Plugin_Settings_Page
- * @version     4.0
+ * @version     4.5
  * @package     easify-woocommerce-connector
  * @author      Easify 
  */
