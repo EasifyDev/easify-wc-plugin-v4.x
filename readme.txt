@@ -4,7 +4,7 @@ Donate link: http://www.easify.co.uk/
 Tags: easify, epos, epos software, stock control software, accounting software, invoicing software, small business software, ecommerce, e-commerce, woothemes, wordpress ecommerce, woocommerce, shopping cart
 Requires at least: 4.0
 Tested up to: 4.8
-Stable tag: 4.5
+Stable tag: 4.5.1
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -99,7 +99,7 @@ support@easify.co.uk
 8. Logging, if you need it you can enable detailed logging for the Easify WooCommerce Plugin.
 
 == Changelog ==
-= 4.5 =
+= 4.5.1 =
 * Added support for product tags being uploaded from Easify V4.47 or later.
 * Fixed issue where duplicate product images were uploaded whenever product updated.
 * Fixed issue where wp-config not found on certain web servers.
