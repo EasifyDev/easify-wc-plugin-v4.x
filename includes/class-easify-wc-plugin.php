@@ -43,7 +43,7 @@ require_once( plugin_dir_path(__FILE__) . 'class-easify-generic-crypto.php' );
  *                  the product in WooCommerce.
  * 
  * @class       Easify_WC_Plugin
- * @version     4.5
+ * @version     4.6
  * @package     easify-woocommerce-connector
  * @author      Easify 
  */
@@ -97,34 +97,43 @@ class Easify_WC_Plugin {
      * handles incoming Easify requests 
      */
     public function receive_from_easify() {
-         Easify_Logging::Log('Easify_WC_Plugin.receive_from_easify() ' . $_SERVER["REQUEST_URI"]);
+        try {
+            Easify_Logging::Log('Easify_WC_Plugin.receive_from_easify() ' . $_SERVER["REQUEST_URI"]);
                 
-        /* Any requests to /easify or /easify/ will be notifications coming from the Easify Server 
-         * i.e. product update notifications. */
-        if (!$_SERVER["REQUEST_URI"]) {
-            return;
-        }
-                        
-        // Make sure URI ends with /easify or /easify/
-        $request_uri = strtolower($_SERVER["REQUEST_URI"]);       
-        if ( (!(substr($request_uri, -strlen( '/easify' ) ) == '/easify') == true) && (!(substr($request_uri, -strlen( '/easify/' ) ) == '/easify/') == true) ) {
-            // Request is not to /easify so return
-            return;
-        }
+            /* Any requests to /easify or /easify/ will be notifications coming from the Easify Server 
+             * i.e. product update notifications. */
+            if (!$_SERVER["REQUEST_URI"]) {
+                return;
+            }
 
-        // Notification from Easify Server - process it...
-        Easify_Logging::Log('Easify_WC_Plugin.receive_from_easify() - Request to /Easify/ received, creating Easify web service.');
-        
-        // Create Easify Web Service...
-        $ews = new Easify_WC_Web_Service(get_option('easify_username'), $this->easify_crypto->decrypt(get_option('easify_password')), null, get_option('easify_web_service_location'));
+            // Make sure URI ends with /easify or /easify/
+            $request_uri = strtolower($_SERVER["REQUEST_URI"]);       
+            if ( (!(substr($request_uri, -strlen( '/easify' ) ) == '/easify') == true) && (!(substr($request_uri, -strlen( '/easify/' ) ) == '/easify/') == true) ) {
+                // Request is not to /easify so return
+                return;
+            }
 
-        // Process the request
-        Easify_Logging::Log('Easify_WC_Plugin.receive_from_easify() - Processing incoming Easify Web Service request.');        
-        $ews->process();
+            // Notification from Easify Server - process it...
+            Easify_Logging::Log('Easify_WC_Plugin.receive_from_easify() - Request to /Easify/ received, creating Easify web service.');
 
-        exit; // do not return control to WordPress
+            // Create Easify Web Service...
+            $ews = new Easify_WC_Web_Service(get_option('easify_username'), $this->easify_crypto->decrypt(get_option('easify_password')), null, get_option('easify_web_service_location'));
+
+            // Process the request
+            Easify_Logging::Log('Easify_WC_Plugin.receive_from_easify() - Processing incoming Easify Web Service request.');        
+            $ews->process();
+
+            exit; // do not return control to WordPress          
+
+        } catch (Exception $e) {
+            Easify_Logging::Log("Easify_WC_Plugin.receive_from_easify() Exception: " . $e->getMessage());
+            
+            // On exception make sure Easify gets notified there was an error so it doesn't
+            // dequeue the notification...
+            header('HTTP/1.1 500 Internal Server Error');
+            exit(0); 
+        }        
     }
-
 }
 
 ?>

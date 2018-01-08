@@ -27,7 +27,7 @@
  * Easify Server.
  * 
  * @class       Easify_Generic_Easify_Server
- * @version     4.5
+ * @version     4.6
  * @package     easify-woocommerce-connector
  * @author      Easify 
  */
@@ -127,7 +127,14 @@ class Easify_Generic_Easify_Server {
 
         // send GET request to server, capture result
         $result = curl_exec($ch);
-
+        $info = curl_getinfo($ch);
+		
+        if ($info['http_code'] != '200')
+        {
+            Easify_Logging::Log('Could not communicate with Easify Server -  http response code: ' . $info['http_code']);
+            throw new Exception('Could not communicate with Easify Server -  http response code: ' . $info['http_code']);
+        }
+        
         // record any errors
         if (curl_error($ch)) {
             $result = 'error:' . curl_error($ch);
@@ -189,7 +196,14 @@ class Easify_Generic_Easify_Server {
 
         // send GET request to server, capture result
         $result = curl_exec($ch);
-
+        $info = curl_getinfo($ch);
+		
+        if ($info['http_code'] != '200')
+        {
+            Easify_Logging::Log('Could not communicate with Easify Server -  http response code: ' . $info['http_code']);
+            throw new Exception('Could not communicate with Easify Server -  http response code: ' . $info['http_code']);
+        }
+                
         // record any errors
         if (curl_error($ch)) {
             $result = 'error:' . curl_error($ch);
