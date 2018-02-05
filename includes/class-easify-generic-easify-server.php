@@ -27,7 +27,7 @@
  * Easify Server.
  * 
  * @class       Easify_Generic_Easify_Server
- * @version     4.6
+ * @version     4.7
  * @package     easify-woocommerce-connector
  * @author      Easify 
  */
@@ -307,6 +307,13 @@ class Easify_Generic_Easify_Server {
         return $subcategories;
     }
 
+    public function GetProductSKUByWebInfoId($id) {
+        $xpath = $this->GetFromEasify('ProductInfo?$filter=ProductInfoId%20eq%20' . $id, null);
+        $sku = $xpath->query('/a:feed/a:entry/a:content/m:properties/d:SKU');
+        
+        return $sku->item(0)->nodeValue;
+    }
+    
     public function GetProductWebInfo($EasifySku) {
         $xpath = $this->GetFromEasify('ProductInfo?$filter=SKU%20eq%20' . $EasifySku, null);
 

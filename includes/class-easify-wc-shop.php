@@ -27,7 +27,7 @@ include_once(dirname(__FILE__) . '/class-easify-generic-shop.php');
  * required for use by the Easify_Generic_Web_Service class.
  * 
  * @class       Easify_Generic_Shop
- * @version     4.5
+ * @version     4.7
  * @package     easify-woocommerce-connector
  * @author      Easify 
  */
@@ -355,22 +355,29 @@ class Easify_WC_Shop extends Easify_Generic_Shop {
             
             Easify_Logging::Log("Easify_WC_Shop.UpdateProductInfo()");
 
+            // At this stage $EasifySku is actually the ProductInfo Id.
+            // Need to get the EasifySKU for it and then lookup the product.           
+            Easify_Logging::Log('Easify_WC_Shop.UpdateProductInfo() - Converting InfoId to EasifySKU. ' . $EasifySku);                            
+            $easifySku = $this->easify_server->GetProductSKUByWebInfoId($EasifySku);
+            
+            Easify_Logging::Log('Easify_WC_Shop.UpdateProductInfo() - Got Easify SKU. ' . $easifySku);
+            
             // get product from Easify Server
-            $Product = $this->easify_server->GetProductFromEasify($EasifySku);
+            $Product = $this->easify_server->GetProductFromEasify($easifySku);
 
             if ($Product->Published == FALSE) {
                 Easify_Logging::Log('Easify_WC_Shop.UpdateProductInfo() - Not published, deleting product and not updating info.');
-                $this->DeleteProduct($EasifySku);
+                $this->DeleteProduct($easifySku);
                 return;
             }
 
             // get web info if available
             if ($Product->WebInfoPresent == 'true') {
                 // get the related product info (picture and html description)
-                $ProductInfo = $this->easify_server->GetProductWebInfo($EasifySku);
+                $ProductInfo = $this->easify_server->GetProductWebInfo($easifySku);
 
                 // update product's web info
-                $this->UpdateProductInfoInDatabase($EasifySku, $ProductInfo['Image'], $ProductInfo['Description']);
+                $this->UpdateProductInfoInDatabase($easifySku, $ProductInfo['Image'], $ProductInfo['Description']);
             }
 
             Easify_Logging::Log("Easify_WC_Shop.UpdateProductInfo() - End.");
