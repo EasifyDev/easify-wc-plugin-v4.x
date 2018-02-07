@@ -4,7 +4,7 @@ Donate link: http://www.easify.co.uk/
 Tags: easify, epos, epos software, stock control software, accounting software, invoicing software, small business software, ecommerce, e-commerce, woothemes, wordpress ecommerce, woocommerce, shopping cart
 Requires at least: 4.0
 Tested up to: 4.9
-Stable tag: 4.7
+Stable tag: 4.8
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -99,6 +99,8 @@ support@easify.co.uk
 8. Logging, if you need it you can enable detailed logging for the Easify WooCommerce Plugin.
 
 == Changelog ==
+= 4.8 =
+* Fixed error when attempting to save Coupon or Shipping SKUs in Easify Settings.
 = 4.7 =
 * Resolved error where outbound Product Info update notifications could get stuck in the Easify Pro eCommerce Channel queue.
 = 4.6 =
@@ -124,5 +126,5 @@ support@easify.co.uk
 * Initial release for Easify V4.x.
 
 == Upgrade Notice ==
-= 4.7 =
-* This update resolves an error where outbound Product Info update notifications could get stuck in the Easify Pro eCommerce Channel queue.
+= 4.8 =
+* This update fixes an error when attempting to save Coupon or Shipping SKUs in Easify Settings.

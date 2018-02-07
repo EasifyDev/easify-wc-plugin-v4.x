@@ -29,7 +29,7 @@ require_once ( 'class-easify-generic-crypto.php' );
  * updates to the settings and validation.
  * 
  * @class       Easify_WC__Plugin_Settings_Page
- * @version     4.5
+ * @version     4.8
  * @package     easify-woocommerce-connector
  * @author      Easify 
  */
@@ -859,8 +859,33 @@ class Easify_WC__Plugin_Settings_Page {
                             get_option('easify_web_service_location'), get_option('easify_username'), $this->easify_crypto->decrypt(get_option('easify_password')));
                 }
 
-                $product = $this->easify_server->GetProductFromEasifyServer($value);
+                try
+                {
+                    $product = $this->easify_server->GetProductFromEasify($value);               
+                }
+                catch (Exception $e)
+                {
+                    $code = $e->getCode(); 
 
+                    if ($code = '404')
+                    {
+                        // Warn user...
+                        $type = 'error';
+                        $message = __($mapping_name . ' Easify SKU ' . $value . ' was not found in Easify Server. Make sure a product with this SKU exists in Easify.', 'require-featured-image');
+                        add_settings_error(
+                                'easify_shipping_mapping', esc_attr('settings_updated'), $message, $type
+                        );
+
+                        $input['easify_shipping_mapping'][$mapping_name] = '';
+
+                        return $input;
+                    }
+                    else 
+                    { 
+                        throw $e;
+                    }
+                }
+            
                 // If SKU not found in Easify Server, warn the user and don't save the value to the database
                 if (empty($product->SKU)) {
                     $type = 'error';
@@ -920,7 +945,33 @@ class Easify_WC__Plugin_Settings_Page {
                         get_option('easify_web_service_location'), get_option('easify_username'), $this->easify_crypto->decrypt(get_option('easify_password')));
             }
 
-            $product = $this->easify_server->GetProductFromEasifyServer($value);
+            try
+            {
+                $product = $this->easify_server->GetProductFromEasify($value);               
+            }
+            catch (Exception $e)
+            {
+                $code = $e->getCode(); 
+                
+                if ($code = '404')
+                {
+                    // Warn user...
+                    $type = 'error';
+                    $message = __($mapping_name . ' Easify SKU ' . $value . ' was not found in Easify Server. Make sure a product with this SKU exists in Easify.', 'require-featured-image');
+                    add_settings_error(
+                            'easify_discount_sku', esc_attr('settings_updated'), $message, $type
+                    );
+
+                    $input['easify_discount_sku'][$mapping_name] = '';  
+                    
+                    return $input;
+                }
+                else 
+                { 
+                    throw $e;
+                }
+            }
+
 
             // If SKU not found in Easify Server, warn the user and don't save the value to the database
             if (empty($product->SKU)) {
