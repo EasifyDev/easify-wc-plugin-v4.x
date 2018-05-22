@@ -41,7 +41,7 @@ require_once( 'class-easify-generic-basic-auth.php' );
  * WooCommerce shop.
  * 
  * @class       Easify_Generic_Web_Service
- * @version     4.1
+ * @version     4.9
  * @package     easify-woocommerce-connector
  * @author      Easify 
  */
@@ -215,8 +215,47 @@ abstract class Easify_Generic_Web_Service {
      * Processes the request as per the variables passed in the http POST
      */
     private function process_request() {
-        Easify_Logging::Log("Easify_Generic_Web_Service->process_request()");
-      
+        Easify_Logging::Log("Easify_Generic_Web_Service->process_request() - Entity:" . $this->easify_entity_name . 
+                " Action:" . $this->easify_action . 
+                " Key:" . $this->easify_key_value);
+        
+         if ($this->easify_entity_name == 'ProductPublished') {
+             // Product published
+            // determine if we insert or update the Easify product
+            if (!$this->shop->IsExistingProduct($this->easify_key_value)) {
+                // insert new product 
+                Easify_Logging::Log("Easify_Generic_Web_Service.InsertProduct(" . $this->easify_key_value . ") - Product Published");
+                $this->shop->InsertProduct($this->easify_key_value);
+            } else {
+                // product doesn't exist, log error message
+                Easify_Logging::Log("Easify_Generic_Web_Service.InsertProduct(" . $this->easify_key_value . ") - already exists");
+            }        
+        }        
+        
+         if ($this->easify_entity_name == 'ProductUnPublished') {
+             // Product unpublished - delete it...
+            if ($this->shop->IsExistingProduct($this->easify_key_value)) {
+                // update existing product
+                Easify_Logging::Log("Easify_Generic_Web_Service.DeleteProduct(" . $this->easify_key_value . ") - product unpublished.");
+                $this->shop->DeleteProduct($this->easify_key_value);
+            } else {
+                // product doesn't exist, log error message
+                Easify_Logging::Log("Easify_Generic_Web_Service.DeleteProduct(" . $this->easify_key_value . ") - doesn't exist");
+            }          
+        }       
+        
+        if ($this->easify_entity_name == 'ProductStockLevelChanged') {
+            // Change product stock level...
+            if ($this->shop->IsExistingProduct($this->easify_key_value)) {
+               // update existing product
+               Easify_Logging::Log("Easify_Generic_Web_Service.UpdateProductStockLevel(" . $this->easify_key_value . ")");
+               $this->shop->UpdateProductStockLevel($this->easify_key_value);
+           } else {
+               // product doesn't exist, log error message
+               Easify_Logging::Log("Easify_Generic_Web_Service.UpdateProductStockLevel(" . $this->easify_key_value . ") - doesn't exist");
+           }           
+        }
+        
         if ($this->easify_entity_name == 'Products') {
             // Product has been added, updated, or deleted in Easify Server           
             switch ($this->easify_action) {

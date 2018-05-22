@@ -27,7 +27,7 @@
  * Easify Server.
  * 
  * @class       Easify_Generic_Easify_Server
- * @version     4.7
+ * @version     4.9
  * @package     easify-woocommerce-connector
  * @author      Easify 
  */
@@ -88,15 +88,16 @@ class Easify_Generic_Easify_Server {
         // return navigatable xml result
         return $xpath;
     }
-/**
- * DEPRECATED
- * 
- * Being replaced with GetFromEasifyServer() which uses JSON instead of XML
- * 
- * @param type $Url
- * @return string
- * @throws Exception
- */
+
+    /**
+     * DEPRECATED
+     * 
+     * Being replaced with GetFromEasifyServer() which uses JSON instead of XML
+     * 
+     * @param type $Url
+     * @return string
+     * @throws Exception
+     */
     private function GetFromWebService($Url) {
         // initialise PHP CURL for HTTP GET action
         $ch = curl_init();
@@ -128,13 +129,12 @@ class Easify_Generic_Easify_Server {
         // send GET request to server, capture result
         $result = curl_exec($ch);
         $info = curl_getinfo($ch);
-		
-        if ($info['http_code'] != '200')
-        {
+
+        if ($info['http_code'] != '200') {
             Easify_Logging::Log('Could not communicate with Easify Server -  http response code: ' . $info['http_code']);
             throw new Exception('Could not communicate with Easify Server -  http response code: ' . $info['http_code']);
         }
-        
+
         // record any errors
         if (curl_error($ch)) {
             $result = 'error:' . curl_error($ch);
@@ -146,7 +146,7 @@ class Easify_Generic_Easify_Server {
 
         return $result;
     }
-    
+
     /**
      * Gets a JSON response from the specified Easify Server...
      * 
@@ -159,7 +159,7 @@ class Easify_Generic_Easify_Server {
      */
     private function GetFromEasifyServer($url) {
         Easify_Logging::Log("Easify_Generic_Easify_Server.GetFromEasifyServer()");
-                            
+
         // initialise PHP CURL for HTTP GET action
         $ch = curl_init();
 
@@ -169,7 +169,7 @@ class Easify_Generic_Easify_Server {
             'Content-Type: application/json',
             'Accept: application/json'
         ));
-        
+
         // setting up coms to an Easify Server 
         // HTTPS and BASIC Authentication
         // NB. required to allow self signed certificates
@@ -197,13 +197,12 @@ class Easify_Generic_Easify_Server {
         // send GET request to server, capture result
         $result = curl_exec($ch);
         $info = curl_getinfo($ch);
-		
-        if ($info['http_code'] != '200')
-        {
+
+        if ($info['http_code'] != '200') {
             Easify_Logging::Log('Could not communicate with Easify Server -  http response code: ' . $info['http_code']);
             throw new Exception('Could not communicate with Easify Server -  http response code: ' . $info['http_code']);
         }
-                
+
         // record any errors
         if (curl_error($ch)) {
             $result = 'error:' . curl_error($ch);
@@ -218,7 +217,7 @@ class Easify_Generic_Easify_Server {
 
     private function GetJsonFromEasifyServer($entity, $key) {
         Easify_Logging::Log("Easify_Generic_Easify_Server.GetJsonFromEasifyServer() - Entity: " . $entity . " Key: " . $key);
-                    
+
         if (empty($this->server_url))
             return;
 
@@ -231,7 +230,7 @@ class Easify_Generic_Easify_Server {
         $ret = $this->GetFromEasifyServer($url, true);
         return $ret;
     }
-    
+
     /**
      * Try to pull a sentinel product from the Easify Server to see if we can #
      * communicate with it...
@@ -240,13 +239,13 @@ class Easify_Generic_Easify_Server {
      */
     public function HaveComsWithEasify() {
         try {
-            Easify_Logging::Log("Easify_Generic_Easify_Server.HaveComsWithEasify()"); 
-            
+            Easify_Logging::Log("Easify_Generic_Easify_Server.HaveComsWithEasify()");
+
             // Get sentinel product from Easify Server
-            $product = new ProductDetails($this->GetJsonFromEasifyServer("Products", "-100"));                       
-            
+            $product = new ProductDetails($this->GetJsonFromEasifyServer("Products", "-100"));
+
             // See if the product we got has the data we expect
-            return $product->SKU == "-100";            
+            return $product->SKU == "-100";
         } catch (Exception $e) {
             Easify_Logging::Log($e);
             return false;
@@ -262,7 +261,7 @@ class Easify_Generic_Easify_Server {
      * @return ProductDetails
      */
     public function GetProductFromEasify($EasifySku) {
-        return new ProductDetails($this->GetJsonFromEasifyServer("Products", $EasifySku));        
+        return new ProductDetails($this->GetJsonFromEasifyServer("Products", $EasifySku));
     }
 
     public function GetEasifyProductCategories() {
@@ -310,10 +309,11 @@ class Easify_Generic_Easify_Server {
     public function GetProductSKUByWebInfoId($id) {
         $xpath = $this->GetFromEasify('ProductInfo?$filter=ProductInfoId%20eq%20' . $id, null);
         $sku = $xpath->query('/a:feed/a:entry/a:content/m:properties/d:SKU');
-        
+
         return $sku->item(0)->nodeValue;
     }
-    
+
+    //TODO: Support multiple product images...
     public function GetProductWebInfo($EasifySku) {
         $xpath = $this->GetFromEasify('ProductInfo?$filter=SKU%20eq%20' . $EasifySku, null);
 
@@ -326,6 +326,47 @@ class Easify_Generic_Easify_Server {
         );
 
         return $product_info;
+    }
+
+    public function GetProductWebInfo4_56($EasifySku) {
+        Easify_Logging::Log('Easify_Generic_Easify_Server->GetProductWebInfo4_56() - SKU:' . $EasifySku);
+
+        $xpath = $this->GetFromEasify('ProductInfo?$filter=SKU%20eq%20' . $EasifySku, null);
+
+        // For version 4_56 product images are no longer stored with the product info...
+        // Instead we return the ProductInfoId so that we can then go and look up the images...
+        // $Images = $xpath->query('/a:feed/a:entry/a:content/m:properties/d:Image');
+        $Ids = $xpath->query('/a:feed/a:entry/a:content/m:properties/d:ProductInfoId');
+        $Descriptions = $xpath->query('/a:feed/a:entry/a:content/m:properties/d:Description');
+
+        $product_info = array(
+            'Id' => $Ids->item(0)->nodeValue,
+            'Description' => $Descriptions->item(0)->nodeValue
+        );
+
+        return $product_info;
+    }
+
+    public function GetProductInfoImages($ProductInfoId) {
+        Easify_Logging::Log('Easify_Generic_Easify_Server->GetProductInfoImages() - $ProductInfoId:' . $ProductInfoId);
+
+        $xpath = $this->GetFromEasify('ProductInfoImages?$orderby=SortOrder&$filter=ProductInfoId%20eq%20' . $ProductInfoId, null);
+        $images = $xpath->query('/a:feed/a:entry/a:content/m:properties/d:ImageBlob');
+
+        Easify_Logging::Log('Easify_Generic_Easify_Server->GetProductInfoImages() - got images:' . $images->length);
+
+        $imageList = array(); // []; // New array
+
+        for ($i = 0; $i < $images->length; $i++) {
+            Easify_Logging::Log('Easify_Generic_Easify_Server->GetProductInfoImages() - processing image blob ' . $i . '.');
+            
+            //Easify_Logging::Log('Easify_Generic_Easify_Server->GetProductInfoImages() - image blob ' . $images->item($i)->nodeValue);           
+            
+            array_push($imageList, $images->item($i)->nodeValue); //  $imageList[$i] = base64_decode($images->item($i)->nodeValue);                     
+        }
+       
+        Easify_Logging::Log('Easify_Generic_Easify_Server->GetProductInfoImages() - Returning ' . count($imageList) . ' images.');        
+        return $imageList;
     }
 
     public function GetEasifyOrderStatuses() {
@@ -400,6 +441,26 @@ class Easify_Generic_Easify_Server {
         }
 
         return $customer_relationships;
+    }
+
+    public function GetEasifyServerVersion() {
+        // Call a WebGet to get the Easify Server version...
+        $url = $this->server_url . '/VersionControl_ServerAssemblyVersion';
+        $xmlString = $this->GetFromWebService($url);
+        $xml = simplexml_load_string($xmlString);
+        return (string) $xml[0];
+    }
+
+    public function GetEasifyServerMinorVersion() {
+        $easifyServerVersion = $this->GetEasifyServerVersion();
+        $versions = Explode('.', $easifyServerVersion);
+        return $versions[1];
+    }
+
+    public function GetEasifyServerMajorVersion() {
+        $easifyServerVersion = $this->GetEasifyServerVersion();
+        $versions = Explode('.', $easifyServerVersion);
+        return $versions[0];
     }
 
     public function GetEasifyPaymentTerms() {
@@ -502,24 +563,25 @@ class Easify_Generic_Easify_Server {
     public function get_allocation_count_by_easify_sku($sku) {
         // Call a WebGet to get the allocated stock level...
         $url = $this->server_url . '/Products_Allocated?SKU=' . $sku;
-        $xmlString = $this->GetFromWebService($url);               
-        $xml = simplexml_load_string($xmlString);                   
-        return (string)$xml[0];                            
+        $xmlString = $this->GetFromWebService($url);
+        $xml = simplexml_load_string($xmlString);
+        return (string) $xml[0];
     }
 
 }
 
 class ProductDetails {
-/**
- * The constructor takes in a serialised JSON object, and de-serialises it into
- * the properties of this class.
- * 
- * Make sure that the property names in this class map exactly to the property
- * names in the JSON object, otherwise you'll get blank values where you 
- * expect values.
- * 
- * @param type $json
- */
+
+    /**
+     * The constructor takes in a serialised JSON object, and de-serialises it into
+     * the properties of this class.
+     * 
+     * Make sure that the property names in this class map exactly to the property
+     * names in the JSON object, otherwise you'll get blank values where you 
+     * expect values.
+     * 
+     * @param type $json
+     */
     function __construct($json) {
         // Initialise class based on passed in json...
         $json = json_decode($json);
@@ -527,12 +589,13 @@ class ProductDetails {
         // Here we iterate each property in the JSON and map it into the 
         // corresponding property of this class.
         foreach ($json as $key => $value) {
-            if (!property_exists($this, $key)) continue;
+            if (!property_exists($this, $key))
+                continue;
 
             $this->{$key} = $value;
         }
     }
-    
+
     public $SKU; // Integer
     public $Description; // String   
     public $CategoryId; // Int     
@@ -569,6 +632,32 @@ class ProductDetails {
     Public $ConditionId; // Int
     Public $ConditionDescription; // String
     public $UseSecondHandVat; // Boolean         
+
+}
+
+class ProductInfoImage {
+
+    function __construct($json) {
+        // Initialise class based on passed in json...
+        $json = json_decode($json);
+
+        // Here we iterate each property in the JSON and map it into the 
+        // corresponding property of this class.
+        foreach ($json as $key => $value) {
+            if (!property_exists($this, $key))
+                continue;
+
+            $this->{$key} = $value;
+        }
+    }
+
+    public $ProductInfoImageId;
+    public $ProductInfoId;
+    public $ImageBlob;
+    public $ImageName;
+    public $ImageSizeBytes;
+    public $SortOrder;
+
 }
 
 ?>

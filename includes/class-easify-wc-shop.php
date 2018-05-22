@@ -27,7 +27,7 @@ include_once(dirname(__FILE__) . '/class-easify-generic-shop.php');
  * required for use by the Easify_Generic_Web_Service class.
  * 
  * @class       Easify_Generic_Shop
- * @version     4.7
+ * @version     4.9
  * @package     easify-woocommerce-connector
  * @author      Easify 
  */
@@ -138,8 +138,20 @@ class Easify_WC_Shop extends Easify_Generic_Shop {
             update_post_meta($ProductId, '_tax_status', 'taxable');
             update_post_meta($ProductId, '_tax_class', strtolower($TaxClass));
 
-            // handling stock
-            update_post_meta($ProductId, '_stock_status', 'instock');
+            // handling stock - we get free stock minus allocated stock
+            $stockLevel = $Product->StockLevel - $this->easify_server->get_allocation_count_by_easify_sku($Product->SKU);
+            
+            // WooCommerce has a separate status value for in stock / out of stock, set it 
+            // according to stock level...
+            if ($stockLevel > 0)
+            {
+                update_post_meta($ProductId, '_stock_status', 'instock');                
+            }
+            else
+            {
+                 update_post_meta($ProductId, '_stock_status', 'outofstock');                   
+            }
+            
             update_post_meta($ProductId, '_manage_stock', 'yes');
             update_post_meta($ProductId, '_downloadable', 'no');
             update_post_meta($ProductId, '_virtual', 'no');
@@ -147,7 +159,7 @@ class Easify_WC_Shop extends Easify_Generic_Shop {
             update_post_meta($ProductId, '_sold_individually', '');
             update_post_meta($ProductId, '_manage_stock', 'yes');
             update_post_meta($ProductId, '_backorders', 'no');
-            update_post_meta($ProductId, '_stock', $Product->StockLevel);
+            update_post_meta($ProductId, '_stock', $stockLevel);
 
             // physical properties
             update_post_meta($ProductId, '_weight', $Product->Weight);
@@ -161,12 +173,9 @@ class Easify_WC_Shop extends Easify_Generic_Shop {
             update_post_meta($ProductId, '_product_attributes', 'a:0:{}'); // no attributes
             
             // get web info if available
-            if ($Product->WebInfoPresent == 'true') {
-                // get the related product info (picture and html description)
-                $ProductInfo = $this->easify_server->GetProductWebInfo($EasifySku);
-
-                // update product's web info
-                $this->UpdateProductInfoInDatabase($EasifySku, $ProductInfo['Image'], $ProductInfo['Description']);
+            //TODO: Modify to support multiple product images...
+            if ($Product->WebInfoPresent == 'true') {                
+                $this->UpdateProductInformation($EasifySku);               
             }
 
             // Add tags if present...
@@ -275,8 +284,20 @@ class Easify_WC_Shop extends Easify_Generic_Shop {
             update_post_meta($ProductId, '_tax_status', 'taxable');
             update_post_meta($ProductId, '_tax_class', strtolower($TaxClass));
 
-            // handling stock
-            update_post_meta($ProductId, '_stock_status', 'instock');
+            // handling stock - we get free stock minus allocated stock
+            $stockLevel = $Product->StockLevel - $this->easify_server->get_allocation_count_by_easify_sku($Product->SKU);
+            
+            // WooCommerce has a separate status value for in stock / out of stock, set it 
+            // according to stock level...
+            if ($stockLevel > 0)
+            {
+                update_post_meta($ProductId, '_stock_status', 'instock');                
+            }
+            else
+            {
+                 update_post_meta($ProductId, '_stock_status', 'outofstock');                   
+            }
+                        
             update_post_meta($ProductId, '_manage_stock', 'yes');
             update_post_meta($ProductId, '_downloadable', 'no');
             update_post_meta($ProductId, '_virtual', 'no');
@@ -287,7 +308,7 @@ class Easify_WC_Shop extends Easify_Generic_Shop {
             
             // This needs to be free stock level not on hand stock level (Stock level minus amount of stock allocated to other orders)...
             Easify_Logging::Log("Easify_WC_Shop.UpdateProduct() - Updating stock level.");                     
-            update_post_meta($ProductId, '_stock', $Product->StockLevel - $this->easify_server->get_allocation_count_by_easify_sku($Product->SKU));
+            update_post_meta($ProductId, '_stock', $stockLevel);
   
             // physical properties
             update_post_meta($ProductId, '_weight', $Product->Weight);
@@ -301,11 +322,7 @@ class Easify_WC_Shop extends Easify_Generic_Shop {
             update_post_meta($ProductId, '_product_attributes', 'a:0:{}'); // no attributes
             // get web info if available
             if ($Product->WebInfoPresent == 'true') {
-                // get the related product info (picture and html description)
-                $ProductInfo = $this->easify_server->GetProductWebInfo($EasifySku);
-
-                // update product's web info
-                $this->UpdateProductInfoInDatabase($EasifySku, $ProductInfo['Image'], $ProductInfo['Description']);
+                $this->UpdateProductInformation($EasifySku);
             }
 
             // Update tags if present...
@@ -319,6 +336,46 @@ class Easify_WC_Shop extends Easify_Generic_Shop {
             Easify_Logging::Log("Easify_WC_Shop.UpdateProduct() - End.");
         } catch (Exception $e) {
             Easify_Logging::Log("Easify_WC_Shop->UpdateProductInDatabase Exception: " . $e->getMessage());
+            throw $e;
+        }
+    }    
+    
+    public function UpdateProductStockLevel($EasifySku) {
+        try {
+            /* Autocomplete hints... */  
+            /* @var $Product ProductDetails */                   
+            Easify_Logging::Log('Easify_WC_Shop.UpdateProductStockLevel()');
+            // get product
+            if (empty($this->easify_server)) {
+                Easify_Logging::Log("Easify_WC_Shop.UpdateProductStockLevel() - Easify Server is NULL");
+            }
+ 
+            $Product = $this->easify_server->GetProductFromEasify($EasifySku);
+            
+            // handling stock - we get free stock minus allocated stock
+            $stockLevel = $Product->StockLevel - $this->easify_server->get_allocation_count_by_easify_sku($Product->SKU);
+                      
+            // get WooCommerce product id from Easify SKU
+            $ProductId = $this->GetWooCommerceProductIdFromEasifySKU($Product->SKU);
+            
+            // WooCommerce has a separate status value for in stock / out of stock, set it 
+            // according to stock level...
+            if ($stockLevel > 0)
+            {
+                update_post_meta($ProductId, '_stock_status', 'instock');                
+            }
+            else
+            {
+                 update_post_meta($ProductId, '_stock_status', 'outofstock');                   
+            }
+                                  
+            // This needs to be free stock level not on hand stock level (Stock level minus amount of stock allocated to other orders)...
+            Easify_Logging::Log("Easify_WC_Shop.UpdateProductStockLevel() - Updating stock level.");                     
+            update_post_meta($ProductId, '_stock', $stockLevel);
+                       
+            Easify_Logging::Log("Easify_WC_Shop.UpdateProductStockLevel() - End.");
+        } catch (Exception $e) {
+            Easify_Logging::Log("Easify_WC_Shop->UpdateProductStockLevel Exception: " . $e->getMessage());
             throw $e;
         }
     }
@@ -373,11 +430,7 @@ class Easify_WC_Shop extends Easify_Generic_Shop {
 
             // get web info if available
             if ($Product->WebInfoPresent == 'true') {
-                // get the related product info (picture and html description)
-                $ProductInfo = $this->easify_server->GetProductWebInfo($easifySku);
-
-                // update product's web info
-                $this->UpdateProductInfoInDatabase($easifySku, $ProductInfo['Image'], $ProductInfo['Description']);
+                $this->UpdateProductInformation($easifySku);                
             }
 
             Easify_Logging::Log("Easify_WC_Shop.UpdateProductInfo() - End.");
@@ -678,9 +731,10 @@ class Easify_WC_Shop extends Easify_Generic_Shop {
         return false;
     }
 
+    //TODO: Add support for multiple product images...
     private function UpdateProductInfoInDatabase($ProductSKU, $Picture, $HTMLDescription) {
         try {
-            Easify_Logging::Log("Easify_WC_Shop.UpdateProductInfoInDatabase()");
+            Easify_Logging::Log("Easify_WC_Shop.UpdateProductInfoInDatabase() - SKU:" . $ProductSKU);
 
             // get WooCommerce product id from Easify SKU
             $ProductId = $this->GetWooCommerceProductIdFromEasifySKU($ProductSKU);
@@ -701,6 +755,9 @@ class Easify_WC_Shop extends Easify_Generic_Shop {
 
             // create image file name and save image byte array
             $FileName = $ImageDirectory . $ProductSKU . ".jpg";
+            
+            Easify_Logging::Log("Easify_WC_Shop.UpdateProductInfoInDatabase() - Image filename:" . $FileName);            
+            
             $ByteArray = $Picture;
             $fp = fopen($FileName, "w");
             fwrite($fp, $ByteArray);
@@ -813,6 +870,171 @@ class Easify_WC_Shop extends Easify_Generic_Shop {
         }
     }
 
+    
+    private function UpdateProductInformation($ProductSku){
+        Easify_Logging::Log("Easify_WC_Shop.UpdateProductInformation()");
+        
+        // Determine which version of Easify Server we're talking to and use 
+        // relevant code to get product info...
+        $serverMinorVersion = $this->easify_server->GetEasifyServerMinorVersion();
+        
+        Easify_Logging::Log("Easify_WC_Shop.UpdateProductInformation() - Server minor version:" . $serverMinorVersion);
+        
+        if ($serverMinorVersion < 56)
+        {
+            Easify_Logging::Log("Easify_WC_Shop.UpdateProductInformation() - Using legacy product info code.");
+                    
+            // Use legacy code for single product image
+            
+            // get the related product info (picture and html description)
+            $ProductInfo = $this->easify_server->GetProductWebInfo($ProductSku);
+
+            // update product's web info
+            $this->UpdateProductInfoInDatabase($ProductSku, $ProductInfo['Image'], $ProductInfo['Description']);
+        }
+        else
+        {
+            Easify_Logging::Log("Easify_WC_Shop.UpdateProductInformation() - Using new product info code.");
+                        
+            // Use new code to support multiple product images (introduced in Easify V4.56)...
+            
+            // Get product info...
+            Easify_Logging::Log("Easify_WC_Shop.UpdateProductInformation() - Getting product info...");
+            $ProductInfo = $this->easify_server->GetProductWebInfo4_56($ProductSku);  
+             
+            // Store product info description
+            $this->UpdateWPDescription($ProductSku, $ProductInfo['Description']);
+                   
+            Easify_Logging::Log("Easify_WC_Shop.UpdateProductInformation() - Product info id: " . $ProductInfo['Id'] );
+            
+            // Get product images... 
+            $images = $this->easify_server->GetProductInfoImages($ProductInfo['Id']);
+            
+            // Save images...            
+            $this->SaveProductImagesToWooCommerce($ProductSku, $images);         
+        }
+        
+    }
+ 
+    
+    private function SaveProductImagesToWooCommerce($ProductSKU, $Images) {
+        try {
+            Easify_Logging::Log("Easify_WC_Shop.SaveProductImagesToWooCommerce()");
+
+            // get WooCommerce product id from Easify SKU
+            $ProductId = $this->GetWooCommerceProductIdFromEasifySKU($ProductSKU);
+
+            // Delete old picture, if one exists. do this before we save the image to disk
+            // otherwise DeleteProductAttachement() will delete the image we just uploaded...
+            $this->DeleteProductAttachement($ProductId);
+            
+            Easify_Logging::Log('Easify_WC_Shop->SaveProductImagesToWooCommerce() - attachments deleted, setting up image directory.');
+            
+            // get WordPress current image upload path
+            $arr = wp_upload_dir();
+            $ImageDirectory = $arr['path'] . '/';
+
+            // save directory on the web server if required
+            if (!is_dir($ImageDirectory)) {
+                mkdir($ImageDirectory, 0777, true);
+            }
+
+            Easify_Logging::Log('Easify_WC_Shop->SaveProductImagesToWooCommerce() - getting ready to process' . count($Images) . ' images.');
+  
+            // Easify_Logging::Log($Images); // Dumps contents of image array to log         
+            
+            $imageIds = array();
+            
+            // Iterate all images...
+            for ($i = 0; $i < count($Images); $i++) {
+                Easify_Logging::Log('Easify_WC_Shop->SaveProductImagesToWooCommerce() - processing image blob ' . $i);
+   
+                // create image file name and save image byte array
+                $FileName = $ImageDirectory . $ProductSKU . '_' . $i . ".jpg";
+                $fp = fopen($FileName, "w");  
+                $ret = fwrite($fp, base64_decode($Images[$i]));
+                fclose($fp);
+
+                Easify_Logging::Log('Easify_WC_Shop->SaveProductImagesToWooCommerce() - saved image size: ' . $ret);     
+                
+                Easify_Logging::Log('Easify_WC_Shop->SaveProductImagesToWooCommerce() - image saved to ' . $FileName);
+                
+                // get the file type of the image we've just uploaded
+                $FileType = wp_check_filetype(basename($FileName), null);
+
+                // get WordPress current image upload URL
+                $UploadFolder = $arr['url'] . '/';
+
+                Easify_Logging::Log("Easify_WC_Shop.SaveProductImagesToWooCommerce() - Creating WordPress image stub");
+               
+                // create a WooCommerce stub for product image / post attachment
+                $Attachment = array(
+                    'guid' => $UploadFolder . basename($FileName),
+                    'post_mime_type' => $FileType['type'],
+                    'post_title' => preg_replace('/\.[^.]+$/', '', basename($FileName)),
+                    'post_content' => '',
+                    'post_status' => 'inherit'
+                );
+
+                // insert product image and get WooCommerce attachment id
+                Easify_Logging::Log("Easify_WC_Shop.SaveProductImagesToWooCommerce() - Inserting WordPress attachment.");
+                $AttachmentId = wp_insert_attachment($Attachment, $FileName, $ProductId);
+
+                array_push($imageIds, $AttachmentId);
+                
+                // generate the meta data for the attachment, and update the database record.
+                $AttachData = wp_generate_attachment_metadata($AttachmentId, $FileName);
+
+                // insert product image meta data 
+                Easify_Logging::Log("Easify_WC_Shop.SaveProductImagesToWooCommerce() - Updating WordPress attachment metadata.");
+                wp_update_attachment_metadata($AttachmentId, $AttachData);                                                    
+            }
+            
+            // Tried to directly alter the images on the WooCommerce product object, but changes didn't want to stick.           
+            // Reverting to updating the post_meta table directly...
+            //Easify_Logging::Log("Easify_WC_Shop.SaveProductImagesToWooCommerce() - Getting WooCommerce product.");
+            //$product = wc_get_product($ProductId);
+            //$product->set_image_id($imageIds[0]); 
+
+            Easify_Logging::Log("Easify_WC_Shop.SaveProductImagesToWooCommerce() - $imageIds:");                   
+            Easify_Logging::Log($imageIds);     
+
+            // Link product record and product image thumbnail (we use the first image)
+            update_post_meta($ProductId, '_thumbnail_id', $imageIds[0]); 
+
+            // Create comma separated list of gallery images...
+            $galleryImageList = implode(',', $imageIds);
+
+            Easify_Logging::Log("Easify_WC_Shop.SaveProductImagesToWooCommerce() - Gallery Images:" . $galleryImageList);          
+
+            // Add gallery images
+            update_post_meta($ProductId, '_product_image_gallery', $galleryImageList);    
+            
+            Easify_Logging::Log("Easify_WC_Shop.SaveProductImagesToWooCommerce() - End.");
+        } catch (Exception $e) {
+            Easify_Logging::Log("Easify_WC_Shop->SaveProductImagesToWooCommerce Exception: " . $e->getMessage());
+            throw $e;
+        }
+    }    
+    
+    
+    
+    private function UpdateWPDescription($ProductSKU, $Description){
+        // get WooCommerce product id from Easify SKU
+        $ProductId = $this->GetWooCommerceProductIdFromEasifySKU($ProductSKU);
+            
+        // create a WooCommerce stub for the new product
+        $ProductStub = array(
+            'ID' => $ProductId,
+            'post_content' => $Description
+        );
+
+        // update product record with html description
+        Easify_Logging::Log("Easify_WC_Shop.UpdateWPDescription() - Updating product record with HTML description.");
+        wp_update_post($ProductStub);         
+    }
+            
+    
 }
 
 ?>

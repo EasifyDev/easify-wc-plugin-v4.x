@@ -4,7 +4,7 @@ Donate link: http://www.easify.co.uk/
 Tags: easify, epos, epos software, stock control software, accounting software, invoicing software, small business software, ecommerce, e-commerce, woothemes, wordpress ecommerce, woocommerce, shopping cart
 Requires at least: 4.0
 Tested up to: 4.9
-Stable tag: 4.8
+Stable tag: 4.9
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -99,6 +99,10 @@ support@easify.co.uk
 8. Logging, if you need it you can enable detailed logging for the Easify WooCommerce Plugin.
 
 == Changelog ==
+= 4.9 =
+* Added support for multiple product images to be uploaded from Easify to the 
+product WooCommerce gallery (requires you to be running Easify V4.56 or later).
+* When stock level is set to zero, WooCommerce now displays 'Out of stock'.
 = 4.8 =
 * Fixed error when attempting to save Coupon or Shipping SKUs in Easify Settings.
 = 4.7 =
@@ -126,5 +130,7 @@ support@easify.co.uk
 * Initial release for Easify V4.x.
 
 == Upgrade Notice ==
-= 4.8 =
-* This update fixes an error when attempting to save Coupon or Shipping SKUs in Easify Settings.
+= 4.9 =
+* This update adds support for multiple product images to be uploaded from 
+Easify and also enables WooCommerce to display 'Out of Stock' when product stock 
+level is zero.

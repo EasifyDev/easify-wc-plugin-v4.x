@@ -277,7 +277,6 @@ class Easify_WC__Plugin_Settings_Page {
             // options...
             $this->easify_options = new Easify_WC_Easify_Options();
 
-
             // If we have a username and password set, initialise easify server classes
             if ($this->options['easify_username'] && $this->options['easify_password']) {
                 // Prepare Easify Server class so we can talk to Easify Server...                
@@ -288,7 +287,6 @@ class Easify_WC__Plugin_Settings_Page {
                 $this->easify_discovery_server = new Easify_Generic_Easify_Server_Discovery(
                         EASIFY_DISCOVERY_SERVER_ENDPOINT_URI, $this->options['easify_username'], $this->options['easify_password']);
             }
-
 
             // Check to see if we have comms with Easify.
             $this->check_easify_server_comms();
