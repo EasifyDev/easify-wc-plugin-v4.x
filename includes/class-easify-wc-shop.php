@@ -941,7 +941,7 @@ class Easify_WC_Shop extends Easify_Generic_Shop {
 
             Easify_Logging::Log('Easify_WC_Shop->SaveProductImagesToWooCommerce() - getting ready to process' . count($Images) . ' images.');
   
-            // Easify_Logging::Log($Images); // Dumps contents of image array to log         
+            //Easify_Logging::Log($Images); // Dumps contents of image array to log         
             
             $imageIds = array();
             

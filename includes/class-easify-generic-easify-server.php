@@ -350,20 +350,27 @@ class Easify_Generic_Easify_Server {
     public function GetProductInfoImages($ProductInfoId) {
         Easify_Logging::Log('Easify_Generic_Easify_Server->GetProductInfoImages() - $ProductInfoId:' . $ProductInfoId);
 
-        $xpath = $this->GetFromEasify('ProductInfoImages?$orderby=SortOrder&$filter=ProductInfoId%20eq%20' . $ProductInfoId, null);
-        $images = $xpath->query('/a:feed/a:entry/a:content/m:properties/d:ImageBlob');
-
-        Easify_Logging::Log('Easify_Generic_Easify_Server->GetProductInfoImages() - got images:' . $images->length);
-
-        $imageList = array(); // []; // New array
-
-        for ($i = 0; $i < $images->length; $i++) {
-            Easify_Logging::Log('Easify_Generic_Easify_Server->GetProductInfoImages() - processing image blob ' . $i . '.');
-            
-            //Easify_Logging::Log('Easify_Generic_Easify_Server->GetProductInfoImages() - image blob ' . $images->item($i)->nodeValue);           
-            
-            array_push($imageList, $images->item($i)->nodeValue); //  $imageList[$i] = base64_decode($images->item($i)->nodeValue);                     
-        }
+        // The product images in Easify V4.56 and later must be retrieved via a Webget method
+        // because the images may be stored on the Easify Server local disk instead of in the 
+        // ProductInfoImages database table. Always use the Products_GetImages method to retrieve images.
+        // Speficy width and height as zero to get images at full size. You can specify the width or height
+        // if you want the images to be sent to you at the specified width or height.
+        $xpath = $this->GetFromEasify('Products_GetImages?productInfoId=' . $ProductInfoId . '&width=0&height=0', null);
+        
+        $serialisedXml = $xpath->query('/d:Products_GetImages')->item(0)->nodeValue;
+                
+        // The string comes back as UTF-16, change it to UTF-8.
+        $xmlString = str_replace("utf-16", "utf-8", $serialisedXml);
+        
+        //Easify_Logging::Log('Easify_Generic_Easify_Server->GetProductInfoImages() - Products_GetImages:' . $serialisedString); 
+                     
+        $xml = new SimpleXMLElement($xmlString);
+      
+        $imageList = array();        
+        foreach($xml as $rawImage) {
+            Easify_Logging::Log('Easify_Generic_Easify_Server->GetProductInfoImages() - Processing image: ' . $rawImage->Name);               
+            array_push($imageList, $rawImage->Bytes); 
+        }                
        
         Easify_Logging::Log('Easify_Generic_Easify_Server->GetProductInfoImages() - Returning ' . count($imageList) . ' images.');        
         return $imageList;
