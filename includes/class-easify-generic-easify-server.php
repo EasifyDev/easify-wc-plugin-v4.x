@@ -27,7 +27,7 @@
  * Easify Server.
  * 
  * @class       Easify_Generic_Easify_Server
- * @version     4.9
+ * @version     4.10
  * @package     easify-woocommerce-connector
  * @author      Easify 
  */

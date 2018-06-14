@@ -54,7 +54,7 @@ require_once( 'class-easify-generic-logging.php' );
  * 
  * 
  * @class       Easify_Generic_Basic_Auth
- * @version     4.1
+ * @version     4.10
  * @package     easify-woocommerce-connector
  * @author      Easify 
  */
@@ -123,10 +123,9 @@ RewriteRule ^(.*) - [E=HTTP_AUTHORIZATION:%1]
     public function get_credentials() {
         //nocache_headers();
                 
-        $usr = isset($_SERVER['PHP_AUTH_USER']) ? $_SERVER['PHP_AUTH_USER'] : '';
-        
+        $usr = isset($_SERVER['PHP_AUTH_USER']) ? $_SERVER['PHP_AUTH_USER'] : '';       
         $pwd = isset($_SERVER['PHP_AUTH_PW']) ? $_SERVER['PHP_AUTH_PW'] : '';
-        
+                
         if (empty($usr) && empty($pwd)){
             $authorization = null;
             
@@ -142,8 +141,9 @@ RewriteRule ^(.*) - [E=HTTP_AUTHORIZATION:%1]
                     
             if (!isset($authorization))
             {
-                Easify_Logging::Log("Easify_Generic_Basic_Auth->get_credentials() - no authorization ceredentials found..");             
-                return;
+                // We couldn't find any basic authentication credentials - usually a config error on web server.
+                Easify_Logging::Log("Easify_Generic_Basic_Auth->get_credentials() - no authorization credentials found..");    
+                throw new Exception('No basic authentication credentials found - please make sure your web server supports basic authentication.');
             }
             
             list($type, $auth) = explode(' ', $authorization);
