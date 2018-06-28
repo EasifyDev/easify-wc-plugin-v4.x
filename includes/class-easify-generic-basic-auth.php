@@ -54,7 +54,7 @@ require_once( 'class-easify-generic-logging.php' );
  * 
  * 
  * @class       Easify_Generic_Basic_Auth
- * @version     4.10
+ * @version     4.11
  * @package     easify-woocommerce-connector
  * @author      Easify 
  */
@@ -142,8 +142,10 @@ RewriteRule ^(.*) - [E=HTTP_AUTHORIZATION:%1]
             if (!isset($authorization))
             {
                 // We couldn't find any basic authentication credentials - usually a config error on web server.
-                Easify_Logging::Log("Easify_Generic_Basic_Auth->get_credentials() - no authorization credentials found..");    
-                throw new Exception('No basic authentication credentials found - please make sure your web server supports basic authentication.');
+                Easify_Logging::Log("Easify_Generic_Basic_Auth->get_credentials() - no authorization credentials found..");   
+                
+                //TODO: 4.11 The following caused certain systems to error on activation
+                // throw new Exception('No basic authentication credentials found - please make sure your web server supports basic authentication.');
             }
             
             list($type, $auth) = explode(' ', $authorization);

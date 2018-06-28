@@ -4,7 +4,7 @@ Donate link: http://www.easify.co.uk/
 Tags: easify, epos, epos software, stock control software, accounting software, invoicing software, small business software, ecommerce, e-commerce, woothemes, wordpress ecommerce, woocommerce, shopping cart
 Requires at least: 4.0
 Tested up to: 4.9
-Stable tag: 4.10
+Stable tag: 4.11
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -99,6 +99,9 @@ support@easify.co.uk
 8. Logging, if you need it you can enable detailed logging for the Easify WooCommerce Plugin.
 
 == Changelog ==
+= 4.11 =
+* Fixed basic authorisation could error out when activating plugin on certain 
+systems.
 = 4.10 =
 * Fixed issue with multiple image uploads when images are stored in local file system on Easify Server.
 = 4.9 =
@@ -132,6 +135,6 @@ product WooCommerce gallery (requires you to be running Easify V4.56 or later).
 * Initial release for Easify V4.x.
 
 == Upgrade Notice ==
-= 4.10 =
-* Fixed issue with multiple image uploads when images are stored in local file 
-system on Easify Server.
+= 4.11 =
+* Fixed basic authorisation could error out when activating plugin on certain 
+systems.
