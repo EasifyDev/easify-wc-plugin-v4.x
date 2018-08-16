@@ -405,7 +405,7 @@ class Easify_WC_Send_Order_To_Easify {
      * @return date
      */
     function get_formatted_date() {
-        return date('Y-m-d\Th:i:s', time());
+        return date('Y-m-d\TH:i:s', time());
     }
 
 }
