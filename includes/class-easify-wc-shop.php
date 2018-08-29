@@ -27,7 +27,7 @@ include_once(dirname(__FILE__) . '/class-easify-generic-shop.php');
  * required for use by the Easify_Generic_Web_Service class.
  * 
  * @class       Easify_Generic_Shop
- * @version     4.9
+ * @version     4.12
  * @package     easify-woocommerce-connector
  * @author      Easify 
  */
@@ -145,11 +145,12 @@ class Easify_WC_Shop extends Easify_Generic_Shop {
             // according to stock level...
             if ($stockLevel > 0)
             {
+                $this->DeleteOutofStockTermRelationship($ProductId);                  
                 update_post_meta($ProductId, '_stock_status', 'instock');                
             }
             else
             {
-                 update_post_meta($ProductId, '_stock_status', 'outofstock');                   
+                update_post_meta($ProductId, '_stock_status', 'outofstock');                   
             }
             
             update_post_meta($ProductId, '_manage_stock', 'yes');
@@ -291,11 +292,12 @@ class Easify_WC_Shop extends Easify_Generic_Shop {
             // according to stock level...
             if ($stockLevel > 0)
             {
+                $this->DeleteOutofStockTermRelationship($ProductId);                                  
                 update_post_meta($ProductId, '_stock_status', 'instock');                
             }
             else
             {
-                 update_post_meta($ProductId, '_stock_status', 'outofstock');                   
+                update_post_meta($ProductId, '_stock_status', 'outofstock');                   
             }
                         
             update_post_meta($ProductId, '_manage_stock', 'yes');
@@ -362,11 +364,12 @@ class Easify_WC_Shop extends Easify_Generic_Shop {
             // according to stock level...
             if ($stockLevel > 0)
             {
+                $this->DeleteOutofStockTermRelationship($ProductId);                             
                 update_post_meta($ProductId, '_stock_status', 'instock');                
             }
             else
             {
-                 update_post_meta($ProductId, '_stock_status', 'outofstock');                   
+                update_post_meta($ProductId, '_stock_status', 'outofstock');                   
             }
                                   
             // This needs to be free stock level not on hand stock level (Stock level minus amount of stock allocated to other orders)...
@@ -380,6 +383,16 @@ class Easify_WC_Shop extends Easify_Generic_Shop {
         }
     }
 
+    private function DeleteOutofStockTermRelationship($product_id)
+    {
+        // 4.12 - WooCommerce inserts an 'outofstock' term when the final product is sold.
+        // Delete term_relationships outofstock when stock becomes available...                           
+        global $wpdb;
+        $result = $wpdb->get_row("SELECT term_id FROM {$wpdb->terms} WHERE name = 'outofstock'");
+        $term_id = $result->term_id;                
+        $wpdb->query("DELETE FROM {$wpdb->term_relationships} WHERE object_id = " . $product_id . " and term_taxonomy_id = " . $term_id);        
+    }
+    
     public function DeleteProduct($ProductSKU) {
         Easify_Logging::Log("Easify_WC_Shop.DeleteProduct()");
         
