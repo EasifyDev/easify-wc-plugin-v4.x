@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 2017  Easify Ltd (email:support@easify.co.uk)
+ * Copyright (C) 2019  Easify Ltd (email:support@easify.co.uk)
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -131,6 +131,7 @@ class Easify_WC_Plugin {
             // On exception make sure Easify gets notified there was an error so it doesn't
             // dequeue the notification...
             header('HTTP/1.1 500 Internal Server Error');
+            echo $e->getMessage();
             exit(0); 
         }        
     }

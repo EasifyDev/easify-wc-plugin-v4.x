@@ -3,8 +3,8 @@ Contributors: easify
 Donate link: http://www.easify.co.uk/
 Tags: easify, epos, epos software, stock control software, accounting software, invoicing software, small business software, ecommerce, e-commerce, woothemes, wordpress ecommerce, woocommerce, shopping cart
 Requires at least: 4.0
-Tested up to: 4.9
-Stable tag: 4.12
+Tested up to: 5.23
+Stable tag: 4.13
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -85,7 +85,7 @@ You can purchase Easify from our website - <http://www.easify.co.uk>
 
 <http://www.easify.co.uk/support/contact>
 support@easify.co.uk
-+44 (0)1305 303040
++44 (0)1223 750350
 
 == Screenshots ==
 
@@ -99,6 +99,9 @@ support@easify.co.uk
 8. Logging, if you need it you can enable detailed logging for the Easify WooCommerce Plugin.
 
 == Changelog ==
+= 4.13 =
+* Changed to use 24hr time when sending orders to Easify. 
+* Added extra error reporting in the event of server 500 errors
 = 4.12 =
 * Fixed issue where products that go out of stock, and then come back into stock can be hidden from WooCommerce product search. 
 = 4.11 =
@@ -137,6 +140,6 @@ product WooCommerce gallery (requires you to be running Easify V4.56 or later).
 * Initial release for Easify V4.x.
 
 == Upgrade Notice ==
-= 4.12 =
-* Fixed issue where products that go out of stock, and then come back into stock
- can be hidden from WooCommerce product search. 
+= 4.13 =
+* Orders now report date placed using 24 hour clock. Added extra information in 
+the event of an internal server 500 error. 
