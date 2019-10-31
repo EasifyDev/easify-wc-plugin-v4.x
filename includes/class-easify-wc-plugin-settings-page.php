@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 2017  Easify Ltd (email:support@easify.co.uk)
+ * Copyright (C) 2019  Easify Ltd (email:support@easify.co.uk)
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -29,7 +29,7 @@ require_once ( 'class-easify-generic-crypto.php' );
  * updates to the settings and validation.
  * 
  * @class       Easify_WC__Plugin_Settings_Page
- * @version     4.8
+ * @version     4.15
  * @package     easify-woocommerce-connector
  * @author      Easify 
  */
@@ -92,6 +92,7 @@ class Easify_WC__Plugin_Settings_Page {
         $this->init_setup();
         $this->init_orders();
         $this->init_customers();
+        $this->init_products();
         $this->init_coupons();
         $this->init_shipping();
         $this->init_payment();
@@ -165,6 +166,7 @@ class Easify_WC__Plugin_Settings_Page {
             'setup' => 'Credentials',
             'orders' => 'Orders',
             'customers' => 'Customers',
+            'products' => 'Products',
             'coupons' => 'Coupons',
             'shipping' => 'Shipping',
             'payment' => 'Payment',
@@ -675,7 +677,7 @@ class Easify_WC__Plugin_Settings_Page {
                 'easify_customer_relationship_id', 'Easify Customer Relationship', array($this, 'setting_html_easify_customer_relationship_id'), 'easify_options_page_customers', 'easify_options_section_customers'
         );
     }
-
+ 
     /**
      * HTML to display for the Customers section
      */
@@ -685,6 +687,61 @@ class Easify_WC__Plugin_Settings_Page {
         <?php
     }
 
+            /**
+     * Initialise Easify Products Settings
+     */
+    private function init_products() {
+
+        // register Products options group 
+        register_setting(
+                'easify_options_products_group', // group
+                'easify_options_products', // name
+                array($this, 'sanitise') // sanitise method
+        );
+
+        // add products page 
+        add_settings_section(
+                'easify_options_section_products', // id
+                'Easify Products Options', // title
+                array($this, 'settings_html_easify_products_message'), // callback
+                'easify_options_page_products' // page
+        );
+
+        // EASIFY_OVERWRITE_WOO_CATEGORIES_ENABLED
+        add_settings_field(
+                'easify_dont_overwrite_woo_categories', // id
+                'Product Updates', // title
+                array($this, 'setting_html_easify_dont_overwrite_woo_categories_enable'), // callback
+                'easify_options_page_products', // page
+                'easify_options_section_products' // section
+        );
+    }
+    
+       /**
+     * HTML to display for the Customers section
+     */
+    public function settings_html_easify_products_message() {
+        ?>
+        <p>Here you can configure options related to Products.</p>
+        <?php
+    } 
+   
+        /**
+     * HTML to display the easify_dont_overwrite_woo_categories_enable config option
+     */
+    public function setting_html_easify_dont_overwrite_woo_categories_enable() {
+        echo '<div class="easify-loggin-option">Don&apos;t Overwrite WooCommerce Categories ';
+        
+        printf('<input type="checkbox" name="easify_options_products[easify_dont_overwrite_woo_categories]" id="easify_dont_overwrite_woo_categories" value="true" %s/>', 
+                isset($this->options['easify_options_products']['easify_dont_overwrite_woo_categories']) &&
+                $this->options['easify_options_products']['easify_dont_overwrite_woo_categories'] == 'true' ? 'checked="checked"' : ''
+        );
+
+        $this->tool_tip('overwrite_woo_categories-tip');
+        echo '</div>';
+    }
+    
+    
     /**
      * Initialise Easify Coupons Settings
      */
@@ -791,6 +848,12 @@ class Easify_WC__Plugin_Settings_Page {
         $this->tool_tip('customers-customer-relationship-tip');
     }
 
+    
+
+    
+    
+    
+    
     /**
      * initialise Easify Shipping page
      */
@@ -1439,6 +1502,7 @@ class Easify_WC__Plugin_Settings_Page {
         // cache Easify options from WordPress database 
         $this->options['easify_options_orders'] = get_option('easify_options_orders');
         $this->options['easify_options_customers'] = get_option('easify_options_customers');
+        $this->options['easify_options_products'] = get_option('easify_options_products');        
         $this->options['easify_options_shipping'] = get_option('easify_options_shipping');
         $this->options['easify_options_payment'] = get_option('easify_options_payment');
         $this->options['easify_options_logging'] = get_option('easify_options_logging');
@@ -1609,6 +1673,22 @@ class Easify_WC__Plugin_Settings_Page {
                 <?= $this->tooltip_click_here_link('customer-relationship') ?>                
             </div>      
 
+            <!-- OPTIONS PRODUCTS -->
+            <div id="overwrite_woo_categories-tip">
+                <h3>Product Updates - Don't Overwrite WooCommerce Categories</h3>
+                <p>When you add a product to Easify and publish it, it will get uploaded to WooCommerce.</p>
+                <p>From then onwards, whenever the product is updated (price change, stock level change etc... 
+                    The product will be updated in WooCommerce.</p>
+                <p>By default this will overwrite the any manual changes you have made to the Product Category in WooCommerce.</p>       
+                <p>Normally this is what you want because if you change a products category in Easify, you will want it
+                    to also update in WooCommerce.</p>
+                <p>However there may be times when you want to change the product category manually in WooCommerce, 
+                for example to add the product to multiple categories.</p>
+                <p>In which case you can tick this box, which will prevent updates to Easify Products 
+                    overwriting or resetting the categories settings that you have manually entered in WooCommerce.</p>
+                <?= $this->tooltip_click_here_link('products-overwrite-woocommerce-categories') ?>                
+            </div> 
+            
             <!-- OPTIONS COUPONS -->
             <div id="coupons-discount-sku-tip">
                 <h3>WooCommerce Coupons</h3>

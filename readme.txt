@@ -3,8 +3,8 @@ Contributors: easify
 Donate link: http://www.easify.co.uk/
 Tags: easify, epos, epos software, stock control software, accounting software, invoicing software, small business software, ecommerce, e-commerce, woothemes, wordpress ecommerce, woocommerce, shopping cart
 Requires at least: 4.0
-Tested up to: 5.23
-Stable tag: 4.13
+Tested up to: 5.2.4
+Stable tag: 4.15
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -99,6 +99,13 @@ support@easify.co.uk
 8. Logging, if you need it you can enable detailed logging for the Easify WooCommerce Plugin.
 
 == Changelog ==
+= 4.15 =
+* Added Products Options Page that allows you to prevent Easify overwriting 
+WooCommerce product categories when they are updated. This is useful if you 
+prefer to manage your product categories in WooCommerce instead of automatically
+using the Easify product categories.
+= 4.14 =
+* Tested up to V5.2.4
 = 4.13 =
 * Changed to use 24hr time when sending orders to Easify. 
 * Added extra error reporting in the event of server 500 errors
@@ -140,6 +147,8 @@ product WooCommerce gallery (requires you to be running Easify V4.56 or later).
 * Initial release for Easify V4.x.
 
 == Upgrade Notice ==
-= 4.13 =
-* Orders now report date placed using 24 hour clock. Added extra information in 
-the event of an internal server 500 error. 
+= 4.15 =
+* Added Products Options Page that allows you to prevent Easify overwriting 
+WooCommerce product categories when they are updated. This is useful if you 
+prefer to manage your product categories in WooCommerce instead of automatically
+using the Easify product categories.

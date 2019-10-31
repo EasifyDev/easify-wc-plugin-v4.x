@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 2017  Easify Ltd (email:support@easify.co.uk)
+ * Copyright (C) 2019  Easify Ltd (email:support@easify.co.uk)
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -22,7 +22,7 @@ require_once( 'easify-generic-constants.php' );
  * Provides easy access to the Easify options that are stored in WordPress
  * 
  * @class       Easify_WC_Easify_Options
- * @version     4.4
+ * @version     4.15
  * @package     easify-woocommerce-connector
  * @author      Easify 
  */
@@ -31,6 +31,7 @@ class Easify_WC_Easify_Options {
     private $order_options;
     private $payment_options;
     private $customer_options;
+    private $product_options;       
     private $shipping_options;
     private $coupon_options;
 
@@ -44,10 +45,24 @@ class Easify_WC_Easify_Options {
         $this->order_options = get_option('easify_options_orders');
         $this->payment_options = get_option('easify_options_payment');
         $this->customer_options = get_option('easify_options_customers');
+        $this->product_options = get_option('easify_options_products');        
         $this->shipping_options = get_option('easify_options_shipping');
         $this->coupon_options = get_option('easify_options_coupons');        
     }
 
+     /**
+     * Determines whether product updates should overwrite WooCommerce product categories.
+     * 
+     * @return boolean
+     */
+    public function get_dont_overwrite_woocommerce_product_categories() {
+        if (isset($this->product_options['easify_dont_overwrite_woo_categories'])) {
+            return $this->product_options['easify_dont_overwrite_woo_categories'];
+        }
+
+        return false;
+    }
+    
     /**
      * Gets the Easify Order Type Id from WordPress options
      * 

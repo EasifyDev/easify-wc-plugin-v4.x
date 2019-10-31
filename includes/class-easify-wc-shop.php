@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (C) 2017  Easify Ltd (email:support@easify.co.uk)
+ * Copyright (C) 2019  Easify Ltd (email:support@easify.co.uk)
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -27,12 +27,22 @@ include_once(dirname(__FILE__) . '/class-easify-generic-shop.php');
  * required for use by the Easify_Generic_Web_Service class.
  * 
  * @class       Easify_Generic_Shop
- * @version     4.12
+ * @version     4.15
  * @package     easify-woocommerce-connector
  * @author      Easify 
  */
 class Easify_WC_Shop extends Easify_Generic_Shop {
 
+    private $easify_options;
+    
+    public function __construct($easify_server_url, $username, $password) {
+        parent :: __construct($easify_server_url, $username, $password);
+
+        // Create an Easify options class for easy access to Easify Options
+        $this->easify_options = new Easify_WC_Easify_Options();            
+    }
+    
+   
     /**
      * Public implementation of abstract methods in superclass
      */
@@ -230,23 +240,30 @@ class Easify_WC_Shop extends Easify_Generic_Shop {
             // sanitise weight value
             $Product->Weight = (isset($Product->Weight) && is_numeric($Product->Weight) ? $Product->Weight : 0);
 
-            // get Easify product categories
-            $EasifyCategories = $this->easify_server->GetEasifyProductCategories();
+            if (!$this->easify_options->get_dont_overwrite_woocommerce_product_categories())
+            {
+                Easify_Logging::Log("Easify_WC_Shop.UpdateProduct() - Updating product categories...");
+              
+                // get Easify product categories
+                $EasifyCategories = $this->easify_server->GetEasifyProductCategories();
 
-            // get Easify category description by the Easify category id
-            $CategoryDescription = $this->easify_server->GetEasifyCategoryDescriptionFromEasifyCategoryId($EasifyCategories, $Product->CategoryId);
+                // get Easify category description by the Easify category id
+                $CategoryDescription = $this->easify_server->GetEasifyCategoryDescriptionFromEasifyCategoryId($EasifyCategories, $Product->CategoryId);
 
-            // get Easify product sub categories by Easify category id
-            $EasifySubCategories = $this->easify_server->GetEasifyProductSubCategoriesByCategory($Product->CategoryId);
+                // get Easify product sub categories by Easify category id
+                $EasifySubCategories = $this->easify_server->GetEasifyProductSubCategoriesByCategory($Product->CategoryId);
 
-            // get Easify sub category description by Easify sub category id
-            $SubCategoryDescription = $this->easify_server->GetEasifyCategoryDescriptionFromEasifyCategoryId($EasifySubCategories, $Product->SubcategoryId);
+                // get Easify sub category description by Easify sub category id
+                $SubCategoryDescription = $this->easify_server->GetEasifyCategoryDescriptionFromEasifyCategoryId($EasifySubCategories, $Product->SubcategoryId);
 
-            // insert new category if needed and return WooCommerce category id
-            $CategoryId = $this->InsertCategoryIntoWooCommerce($CategoryDescription, $CategoryDescription);
+                // insert new category if needed and return WooCommerce category id
+                $CategoryId = $this->InsertCategoryIntoWooCommerce($CategoryDescription, $CategoryDescription);
 
-            // insert new sub category if needed and return WooCommerce sub category id
-            $SubCategoryId = $this->InsertSubCategoryIntoWooCommerce($SubCategoryDescription, $SubCategoryDescription, $CategoryId);
+                // insert new sub category if needed and return WooCommerce sub category id
+                $SubCategoryId = $this->InsertSubCategoryIntoWooCommerce($SubCategoryDescription, $SubCategoryDescription, $CategoryId);                
+            }
+            
+
 
             // get WooCommerce product id from Easify SKU
             $ProductId = $this->GetWooCommerceProductIdFromEasifySKU($Product->SKU);
@@ -263,8 +280,13 @@ class Easify_WC_Shop extends Easify_Generic_Shop {
             // insert product record and get WooCommerce product id
             $ProductId = wp_update_post($ProductStub);
 
-            // link subcategory to product
-            wp_set_post_terms($ProductId, array($SubCategoryId), "product_cat");
+            if (!$this->easify_options->get_dont_overwrite_woocommerce_product_categories())
+            {
+                Easify_Logging::Log("Easify_WC_Shop.UpdateProduct() - Linking new product categories...");
+                
+                // link subcategory to product
+                wp_set_post_terms($ProductId, array($SubCategoryId), "product_cat");            
+            }
 
             // get WooCommerce tax class from Easify tax id
             $TaxClass = $this->GetWooCommerceTaxIdByEasifyTaxId($Product->TaxId);

@@ -4,17 +4,17 @@
  * Plugin Name: Easify Server WooCommerce
  * Plugin URI: http://www.easify.co.uk/wordpress/
  * Description: Connects Easify Business Management, EPOS (Electronic Point of Sale) and invoicing software to your WooCommerce enabled WordPress website. Allowing you to keep your online and offline shop's orders and stock control synchronised.
- * Version: 4.13
+ * Version: 4.15
  * License: GPL2
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Author: Easify
  * Author URI: http://www.easify.co.uk/
  * Requires at least: 4.0
- * Tested up to: 4.9
+ * Tested up to: 5.2.4
  */
 
 /**
- * Copyright (C) 2017  Easify Ltd (email:support@easify.co.uk)
+ * Copyright (C) 2019  Easify Ltd (email:support@easify.co.uk)
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
