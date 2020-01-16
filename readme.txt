@@ -4,7 +4,7 @@ Donate link: http://www.easify.co.uk/
 Tags: easify, epos, epos software, stock control software, accounting software, invoicing software, small business software, ecommerce, e-commerce, woothemes, wordpress ecommerce, woocommerce, shopping cart
 Requires at least: 4.0
 Tested up to: 5.3.2
-Stable tag: 4.16
+Stable tag: 4.17
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -99,6 +99,9 @@ support@easify.co.uk
 8. Logging, if you need it you can enable detailed logging for the Easify WooCommerce Plugin.
 
 == Changelog ==
+= 4.17 =
+* Fixed issue with previous update where product images and HTML description 
+still being updated even if plugin set not to accept updates.
 = 4.16 =
 * Added an option to the Product options page to allow you to disable updates
 from Easify. You can then use Easify to publish the product to WooCommerce, and
@@ -153,9 +156,6 @@ product WooCommerce gallery (requires you to be running Easify V4.56 or later).
 * Initial release for Easify V4.x.
 
 == Upgrade Notice ==
-= 4.16 =
-* Added an option to the Product options page to allow you to disable updates
-from Easify. You can then use Easify to publish the product to WooCommerce, and
-then use WooCommerce to edit product information without it being overwritten
-by subsequent changes to the product in Easify. Easify product price changes and 
-stock levels will synchronise to WooCommerce.
+= 4.17 =
+* Fixed issue with previous update where product images and HTML description 
+still being updated even if plugin set not to accept updates.

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (C) 2019  Easify Ltd (email:support@easify.co.uk)
+ * Copyright (C) 2020  Easify Ltd (email:support@easify.co.uk)
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -27,7 +27,7 @@ include_once(dirname(__FILE__) . '/class-easify-generic-shop.php');
  * required for use by the Easify_Generic_Web_Service class.
  * 
  * @class       Easify_Generic_Shop
- * @version     4.16
+ * @version     4.17
  * @package     easify-woocommerce-connector
  * @author      Easify 
  */
@@ -493,6 +493,12 @@ class Easify_WC_Shop extends Easify_Generic_Shop {
             
             Easify_Logging::Log("Easify_WC_Shop.UpdateProductInfo()");
 
+            if ($this->easify_options->get_easify_ignore_product_updates())
+            {
+                Easify_Logging::Log('Easify_WC_Shop.UpdateProductInfo() - Easify plugin settings dictate ignore product updates. Not updating.');                
+                return;            
+            }  
+            
             // At this stage $EasifySku is actually the ProductInfo Id.
             // Need to get the EasifySKU for it and then lookup the product.           
             Easify_Logging::Log('Easify_WC_Shop.UpdateProductInfo() - Converting InfoId to EasifySKU. ' . $EasifySku);                            
