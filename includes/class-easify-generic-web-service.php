@@ -41,7 +41,7 @@ require_once( 'class-easify-generic-basic-auth.php' );
  * WooCommerce shop.
  * 
  * @class       Easify_Generic_Web_Service
- * @version     4.9
+ * @version     4.16
  * @package     easify-woocommerce-connector
  * @author      Easify 
  */
@@ -253,6 +253,18 @@ abstract class Easify_Generic_Web_Service {
            } else {
                // product doesn't exist, log error message
                Easify_Logging::Log("Easify_Generic_Web_Service.UpdateProductStockLevel(" . $this->easify_key_value . ") - doesn't exist");
+           }           
+        }
+        
+        if ($this->easify_entity_name == 'ProductPriceChanged') {
+            // Change product price...
+            if ($this->shop->IsExistingProduct($this->easify_key_value)) {
+               // update existing product
+               Easify_Logging::Log("Easify_Generic_Web_Service.UpdateProductPrice(" . $this->easify_key_value . ")");
+               $this->shop->UpdateProductPrice($this->easify_key_value);
+           } else {
+               // product doesn't exist, log error message
+               Easify_Logging::Log("Easify_Generic_Web_Service.UpdateProductPrice(" . $this->easify_key_value . ") - doesn't exist");
            }           
         }
         

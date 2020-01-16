@@ -22,7 +22,7 @@ require_once( 'easify-generic-constants.php' );
  * Provides easy access to the Easify options that are stored in WordPress
  * 
  * @class       Easify_WC_Easify_Options
- * @version     4.15
+ * @version     4.16
  * @package     easify-woocommerce-connector
  * @author      Easify 
  */
@@ -58,6 +58,19 @@ class Easify_WC_Easify_Options {
     public function get_dont_overwrite_woocommerce_product_categories() {
         if (isset($this->product_options['easify_dont_overwrite_woo_categories'])) {
             return $this->product_options['easify_dont_overwrite_woo_categories'];
+        }
+
+        return false;
+    }
+    
+     /**
+     * Determines whether Easify product updates should overwrite WooCommerce product information.
+     * 
+     * @return boolean
+     */
+    public function get_easify_ignore_product_updates() {
+        if (isset($this->product_options['easify_ignore_product_updates'])) {
+            return $this->product_options['easify_ignore_product_updates'];
         }
 
         return false;

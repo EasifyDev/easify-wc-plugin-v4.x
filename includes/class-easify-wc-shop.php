@@ -27,7 +27,7 @@ include_once(dirname(__FILE__) . '/class-easify-generic-shop.php');
  * required for use by the Easify_Generic_Web_Service class.
  * 
  * @class       Easify_Generic_Shop
- * @version     4.15
+ * @version     4.16
  * @package     easify-woocommerce-connector
  * @author      Easify 
  */
@@ -206,7 +206,14 @@ class Easify_WC_Shop extends Easify_Generic_Shop {
     public function UpdateProduct($EasifySku) {
         try {
             /* Autocomplete hints... */  
-            /* @var $Product ProductDetails */                   
+            /* @var $Product ProductDetails */    
+            
+            if ($this->easify_options->get_easify_ignore_product_updates())
+            {
+                Easify_Logging::Log('Easify_WC_Shop.UpdateProduct() - Easify plugin settings dictate ignore product updates. Not updating.');                
+                return;            
+            }            
+            
             Easify_Logging::Log('Easify_WC_Shop.UpdateProduct()');
             // get product
             if (empty($this->easify_server)) {
@@ -405,6 +412,45 @@ class Easify_WC_Shop extends Easify_Generic_Shop {
         }
     }
 
+     public function UpdateProductPrice($EasifySku) {
+        try {
+            /* Autocomplete hints... */  
+            /* @var $Product ProductDetails */   
+            
+            Easify_Logging::Log('Easify_WC_Shop.UpdateProductPrice()');
+            // get product
+            if (empty($this->easify_server)) {
+                Easify_Logging::Log("Easify_WC_Shop.UpdateProductPrice() - Easify Server is NULL");
+            }
+ 
+            $Product = $this->easify_server->GetProductFromEasify($EasifySku);
+        
+            // get WooCommerce product id from Easify SKU
+            $ProductId = $this->GetWooCommerceProductIdFromEasifySKU($Product->SKU);
+
+            // calculate price from retail margin and cost price
+            $Price = round(($Product->CostPrice / (100 - $Product->RetailMargin) * 100), 4);
+
+            // catch reserved delivery SKUs and update delivery prices
+            if ($this->UpdateDeliveryPrice($Product->SKU, $Price))
+            {
+                Easify_Logging::Log("Easify_WC_Shop.UpdateProduct() - Product was delivery SKU, updated price and nothing more to do.");
+                 return;               
+            }
+            
+            Easify_Logging::Log("Easify_WC_Shop.UpdateProductPrice() - Updating price.");                     
+            update_post_meta($ProductId, '_price', $Price);
+            update_post_meta($ProductId, '_regular_price', $Price);         
+            update_post_meta($ProductId, '_sale_price', $Price);                       
+            
+            Easify_Logging::Log("Easify_WC_Shop.UpdateProductPrice() - End.");
+        } catch (Exception $e) {
+            Easify_Logging::Log("Easify_WC_Shop->UpdateProductPrice Exception: " . $e->getMessage());
+            throw $e;
+        }
+    }   
+    
+    
     private function DeleteOutofStockTermRelationship($product_id)
     {
         // 4.12 - WooCommerce inserts an 'outofstock' term when the final product is sold.

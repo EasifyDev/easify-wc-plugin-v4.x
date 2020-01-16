@@ -707,7 +707,6 @@ class Easify_WC__Plugin_Settings_Page {
                 'easify_options_page_products' // page
         );
 
-        // EASIFY_OVERWRITE_WOO_CATEGORIES_ENABLED
         add_settings_field(
                 'easify_dont_overwrite_woo_categories', // id
                 'Product Updates', // title
@@ -715,6 +714,14 @@ class Easify_WC__Plugin_Settings_Page {
                 'easify_options_page_products', // page
                 'easify_options_section_products' // section
         );
+        
+        add_settings_field(
+                'easify_ignore_product_updates', // id
+                '', // title
+                array($this, 'easify_ignore_product_updates'), // callback
+                'easify_options_page_products', // page
+                'easify_options_section_products' // section
+        );        
     }
     
        /**
@@ -740,6 +747,23 @@ class Easify_WC__Plugin_Settings_Page {
         $this->tool_tip('overwrite_woo_categories-tip');
         echo '</div>';
     }
+    
+         /**
+     * HTML to display the easify_ignore_product_updates config option
+     */
+    public function easify_ignore_product_updates() {
+        echo '<div class="easify-loggin-option">Ignore Easify Product Updates ';
+        
+        printf('<input type="checkbox" name="easify_options_products[easify_ignore_product_updates]" id="easify_ignore_product_updates" value="true" %s/>', 
+                isset($this->options['easify_options_products']['easify_ignore_product_updates']) &&
+                $this->options['easify_options_products']['easify_ignore_product_updates'] == 'true' ? 'checked="checked"' : ''
+        );
+
+        $this->tool_tip('easify_ignore_product_updates-tip');
+        echo '</div>';
+    }   
+    
+    
     
     
     /**
@@ -1502,7 +1526,7 @@ class Easify_WC__Plugin_Settings_Page {
         // cache Easify options from WordPress database 
         $this->options['easify_options_orders'] = get_option('easify_options_orders');
         $this->options['easify_options_customers'] = get_option('easify_options_customers');
-        $this->options['easify_options_products'] = get_option('easify_options_products');        
+        $this->options['easify_options_products'] = get_option('easify_options_products');                
         $this->options['easify_options_shipping'] = get_option('easify_options_shipping');
         $this->options['easify_options_payment'] = get_option('easify_options_payment');
         $this->options['easify_options_logging'] = get_option('easify_options_logging');
@@ -1679,7 +1703,7 @@ class Easify_WC__Plugin_Settings_Page {
                 <p>When you add a product to Easify and publish it, it will get uploaded to WooCommerce.</p>
                 <p>From then onwards, whenever the product is updated (price change, stock level change etc... 
                     The product will be updated in WooCommerce.</p>
-                <p>By default this will overwrite the any manual changes you have made to the Product Category in WooCommerce.</p>       
+                <p>By default this will overwrite any manual changes you have made to the Product Category in WooCommerce.</p>       
                 <p>Normally this is what you want because if you change a products category in Easify, you will want it
                     to also update in WooCommerce.</p>
                 <p>However there may be times when you want to change the product category manually in WooCommerce, 
@@ -1687,6 +1711,21 @@ class Easify_WC__Plugin_Settings_Page {
                 <p>In which case you can tick this box, which will prevent updates to Easify Products 
                     overwriting or resetting the categories settings that you have manually entered in WooCommerce.</p>
                 <?= $this->tooltip_click_here_link('products-overwrite-woocommerce-categories') ?>                
+            </div> 
+            
+            <div id="easify_ignore_product_updates-tip">
+                <h3>Product Updates - Ignore Easify Product Updates</h3>
+                <p>As standard when you publish a product from Easify to WooCommerce, the product will be 
+                    linked from Easify to WooCommerce and any edits to the product that you make in Easify 
+                    will be automatically published to WooCommerce. This is usually what you want, everything 
+                    driven from Easify.</p>
+                <p>However if you need to be able to edit the product details (images, tags, attributes etc...) in 
+                    WooCommerce and not have them overwritten by Easify you can enable this option.</p>
+                <p>When you tick <strong>Ignore Easify Product Updates</strong> it means that products that 
+                are published from Easify will be uploaded to WooCommerce, but from that point onwards only 
+                product price and stock level changes will be uploaded to WooCommerce. Editing the product image, 
+                tags, description etc... will not modify the product in WooCommerce.</p>
+                <?= $this->tooltip_click_here_link('ignore-product-updates') ?>                
             </div> 
             
             <!-- OPTIONS COUPONS -->
