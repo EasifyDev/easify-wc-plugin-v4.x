@@ -22,7 +22,7 @@ require_once( 'easify-generic-constants.php' );
  * Provides easy access to the Easify options that are stored in WordPress
  * 
  * @class       Easify_WC_Easify_Options
- * @version     4.16
+ * @version     4.19
  * @package     easify-woocommerce-connector
  * @author      Easify 
  */
@@ -75,6 +75,45 @@ class Easify_WC_Easify_Options {
 
         return false;
     }
+    
+    /**
+     * Determines whether Easify products should be uploaded to website.
+     * 
+     * @return boolean
+     */
+    public function get_easify_dont_upload_products() {
+        if (isset($this->product_options['easify_dont_upload_products'])) {
+            return $this->product_options['easify_dont_upload_products'];
+        }
+
+        return false;
+    }
+    
+    /**
+     * Determines whether Easify product price changes should be uploaded to website.
+     * 
+     * @return boolean
+     */
+    public function get_easify_dont_update_product_prices() {
+        if (isset($this->product_options['easify_dont_update_product_prices'])) {
+            return $this->product_options['easify_dont_update_product_prices'];
+        }
+
+        return false;
+    }
+    
+     /**
+     * Determines whether Easify product stock level changes should be uploaded to website.
+     * 
+     * @return boolean
+     */
+    public function get_easify_dont_update_product_stock_levels() {
+        if (isset($this->product_options['easify_dont_update_product_stock_levels'])) {
+            return $this->product_options['easify_dont_update_product_stock_levels'];
+        }
+
+        return false;
+    }  
     
     /**
      * Gets the Easify Order Type Id from WordPress options

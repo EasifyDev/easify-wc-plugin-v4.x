@@ -3,10 +3,11 @@ Contributors: easify
 Donate link: http://www.easify.co.uk/
 Tags: easify, epos, epos software, stock control software, accounting software, invoicing software, small business software, ecommerce, e-commerce, woothemes, wordpress ecommerce, woocommerce, shopping cart
 Requires at least: 4.0
-Tested up to: 5.3.2
-Stable tag: 4.17
+Tested up to: 5.4
+Stable tag: 4.19
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
+WC tested up to: 4.0
 
 Connects Easify V4.x Small Business Software to your WooCommerce online shop, 
 allowing you to synchronise stock levels between your physical shop and your
@@ -99,6 +100,13 @@ support@easify.co.uk
 8. Logging, if you need it you can enable detailed logging for the Easify WooCommerce Plugin.
 
 == Changelog ==
+= 4.19 =
+* Added new Product settings options to allow products to be not uploaded from 
+Easify when first published, also to ignore price and/or stock level changes
+from Easify.
+= 4.18 =
+* Fixed issue where un-published product in Easify could still update stock 
+level and price of product in WooCommerce.
 = 4.17 =
 * Fixed issue with previous update where product images and HTML description 
 still being updated even if plugin set not to accept updates.
@@ -156,6 +164,7 @@ product WooCommerce gallery (requires you to be running Easify V4.56 or later).
 * Initial release for Easify V4.x.
 
 == Upgrade Notice ==
-= 4.17 =
-* Fixed issue with previous update where product images and HTML description 
-still being updated even if plugin set not to accept updates.
+= 4.19 =
+* Added new Product settings options to allow products to be not uploaded from 
+Easify when first published, also to ignore price and/or stock level changes
+from Easify.

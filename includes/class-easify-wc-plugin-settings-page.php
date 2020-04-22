@@ -29,7 +29,7 @@ require_once ( 'class-easify-generic-crypto.php' );
  * updates to the settings and validation.
  * 
  * @class       Easify_WC__Plugin_Settings_Page
- * @version     4.15
+ * @version     4.19
  * @package     easify-woocommerce-connector
  * @author      Easify 
  */
@@ -708,8 +708,33 @@ class Easify_WC__Plugin_Settings_Page {
         );
 
         add_settings_field(
-                'easify_dont_overwrite_woo_categories', // id
+                'easify_dont_upload_products', // id
                 'Product Updates', // title
+                array($this, 'setting_html_easify_dont_upload_products'), // callback
+                'easify_options_page_products', // page
+                'easify_options_section_products' // section
+        );
+
+        add_settings_field(
+                'easify_dont_update_product_prices', // id
+                '', // title
+                array($this, 'setting_html_easify_dont_update_product_prices'), // callback
+                'easify_options_page_products', // page
+                'easify_options_section_products' // section
+        );
+        
+         add_settings_field(
+                'easify_dont_update_product_stock_levels', // id
+                '', // title
+                array($this, 'setting_html_easify_dont_update_product_stock_levels'), // callback
+                'easify_options_page_products', // page
+                'easify_options_section_products' // section
+        );       
+        
+        
+        add_settings_field(
+                'easify_dont_overwrite_woo_categories', // id
+                '', // title
                 array($this, 'setting_html_easify_dont_overwrite_woo_categories_enable'), // callback
                 'easify_options_page_products', // page
                 'easify_options_section_products' // section
@@ -733,6 +758,58 @@ class Easify_WC__Plugin_Settings_Page {
         <?php
     } 
    
+    
+         /**
+     * HTML to display the easify_dont_upload_products config option
+     */
+    public function setting_html_easify_dont_upload_products() {
+        echo '<div class="easify-loggin-option">Don&apos;t Upload Products from Easify ';
+        
+        printf('<input type="checkbox" name="easify_options_products[easify_dont_upload_products]" id="easify_dont_upload_products" value="true" %s/>', 
+                isset($this->options['easify_options_products']['easify_dont_upload_products']) &&
+                $this->options['easify_options_products']['easify_dont_upload_products'] == 'true' ? 'checked="checked"' : ''
+        );
+
+        $this->tool_tip('easify_dont_upload_products-tip');
+        echo '</div>';
+    }   
+    
+    
+           /**
+     * HTML to display the easify_dont_update_product_prices config option
+     */
+    public function setting_html_easify_dont_update_product_prices() {
+        echo '<div class="easify-loggin-option">Don&apos;t Update Prices from Easify ';
+        
+        printf('<input type="checkbox" name="easify_options_products[easify_dont_update_product_prices]" id="easify_dont_update_product_prices" value="true" %s/>', 
+                isset($this->options['easify_options_products']['easify_dont_update_product_prices']) &&
+                $this->options['easify_options_products']['easify_dont_update_product_prices'] == 'true' ? 'checked="checked"' : ''
+        );
+
+        $this->tool_tip('easify_dont_update_product_prices-tip');
+        echo '</div>';
+    } 
+    
+    
+     
+           /**
+     * HTML to display the easify_dont_update_product_prices config option
+     */
+    public function setting_html_easify_dont_update_product_stock_levels() {
+        echo '<div class="easify-loggin-option">Don&apos;t Update Stock Levels from Easify ';
+        
+        printf('<input type="checkbox" name="easify_options_products[easify_dont_update_product_stock_levels]" id="easify_dont_update_product_stock_levels" value="true" %s/>', 
+                isset($this->options['easify_options_products']['easify_dont_update_product_stock_levels']) &&
+                $this->options['easify_options_products']['easify_dont_update_product_stock_levels'] == 'true' ? 'checked="checked"' : ''
+        );
+
+        $this->tool_tip('easify_dont_update_product_stock_levels-tip');
+        echo '</div>';
+    }    
+    
+    
+    
+    
         /**
      * HTML to display the easify_dont_overwrite_woo_categories_enable config option
      */
@@ -1698,6 +1775,36 @@ class Easify_WC__Plugin_Settings_Page {
             </div>      
 
             <!-- OPTIONS PRODUCTS -->
+            <div id="easify_dont_upload_products-tip">
+                <h3>Product Updates - Don't Upload Products from Easify</h3>
+                <p>If you tick this option, products that are published in Easify will not be uploaded to the website.</p>
+                <p>This is useful if you want to manage your products in WooCommerce and link them to your products in 
+                Easify, or if you already have many existing products in WooCommerce and don't want to re-create them in Easify.</p>
+                <p>With this option, you will still need to create the product in Easify Pro and publish it, but the product 
+                will not be uploaded to WooCommerce.</p>
+                <p>You will also need to make sure you have entered the product Easify SKU value in the SKU field on the 
+                WooCommerce product page Inventory tab in order to link the Easify Prosuct with the WooCommerce Product.</p>
+                <?= $this->tooltip_click_here_link('easify-dont-upload-products') ?>                
+            </div> 
+            
+              <div id="easify_dont_update_product_prices-tip">
+                <h3>Product Updates - Don't Update Prices from Easify</h3>
+                <p>If you tick this option, any price changes you make to the product in Easify will not be sent to the website.</p>
+                <p>This is useful if you want to have different pricing on your website than you do in Easify.</p>
+                <p>For example this will allow you to have different prices in your shop and on your website.</p>
+                <?= $this->tooltip_click_here_link('easify-dont-update-product-prices') ?>                
+            </div>      
+            
+              <div id="easify_dont_update_product_stock_levels-tip">
+                <h3>Product Updates - Don't Update Stock Levels from Easify</h3>
+                <p>If you tick this option, any stock level changes you make to the product in Easify will not be sent to the website.</p>
+                <p>This will mean that as you sell products via Easify either via the back-end or via the POS, the stock level 
+                    changes will not be sent to your website.</p>
+                <p>This might be useful if you wanted to maintain separate stock levels for your website and your premises.</p>
+                <?= $this->tooltip_click_here_link('easify-dont-update-product-stock-levels') ?>                
+            </div>             
+            
+            
             <div id="overwrite_woo_categories-tip">
                 <h3>Product Updates - Don't Overwrite WooCommerce Categories</h3>
                 <p>When you add a product to Easify and publish it, it will get uploaded to WooCommerce.</p>
@@ -1725,6 +1832,8 @@ class Easify_WC__Plugin_Settings_Page {
                 are published from Easify will be uploaded to WooCommerce, but from that point onwards only 
                 product price and stock level changes will be uploaded to WooCommerce. Editing the product image, 
                 tags, description etc... will not modify the product in WooCommerce.</p>
+                <p><strong>Note:</strong> You can also prevent product price and stock level changes from being uploaded using 
+                the options above.</p>
                 <?= $this->tooltip_click_here_link('ignore-product-updates') ?>                
             </div> 
             
