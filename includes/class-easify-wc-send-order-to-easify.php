@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 2017  Easify Ltd (email:support@easify.co.uk)
+ * Copyright (C) 2020  Easify Ltd (email:support@easify.co.uk)
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -30,7 +30,7 @@ require_once ( 'class-easify-wc-woocommerce-order.php' );
  * be queued for delivery to the relevant Easify Server.
  * 
  * @class       Easify_WC_Send_Order_To_Easify
- * @version     4.5
+ * @version     4.20
  * @package     easify-woocommerce-connector
  * @author      Easify 
  */
@@ -227,7 +227,12 @@ class Easify_WC_Send_Order_To_Easify {
             $easify_order_detail = new Easify_Order_Order_Details();
 
             // Copy WooCommerce order detail (product) to Easify Order Model order details    
-            $easify_order_detail->Sku = $this->get_easify_sku_by_woocommerce_product_id($woocommerce_product['product_id']);
+            
+            $variationId = $woocommerce_product['variation_id'];
+            Easify_Logging::Log('Easify_WC_Send_Order_To_Easify.do_order_details() $variationId: ' . $variationId);         
+            
+            $easify_order_detail->Sku = $this->get_easify_sku_by_woocommerce_product_id($woocommerce_product['product_id'], $variationId);                 
+                      
             $easify_order_detail->Qty = $woocommerce_product['qty'];
             $easify_order_detail->Price = round($woocommerce_product['line_subtotal'] / ($woocommerce_product['qty'] == 0 ? 1 : $woocommerce_product['qty']), 4);
             $easify_order_detail->Comments = '';
@@ -287,11 +292,41 @@ class Easify_WC_Send_Order_To_Easify {
      * @param integer $woocommerce_product_id
      * @return integer
      */
-    private function get_easify_sku_by_woocommerce_product_id($woocommerce_product_id) {
+    private function get_easify_sku_by_woocommerce_product_id($woocommerce_product_id, $variationId) {
         global $wpdb;
-        return $wpdb->get_var($wpdb->prepare(
-                                "SELECT meta_value FROM " . $wpdb->postmeta . " WHERE meta_key = '_sku' AND post_id = '%s' LIMIT 1", $woocommerce_product_id
-        ));
+        
+        Easify_Logging::Log('Easify_WC_Send_Order_To_Easify.get_easify_sku_by_woocommerce_product_id() ' . 
+                ' $woocommerce_product_id: ' . $woocommerce_product_id .
+                ' $variationId: ' . $variationId);
+        
+        if ($variationId != '0')
+        {
+            // Have variation - try to get sku
+            $sku = $wpdb->get_var($wpdb->prepare(
+                    "SELECT meta_value FROM " . $wpdb->postmeta . 
+                    " WHERE meta_key = '_sku' AND post_id = '%s' LIMIT 1", $variationId));
+            
+            if ($sku == '')
+            {
+                Easify_Logging::Log('Easify_WC_Send_Order_To_Easify.get_easify_sku_by_woocommerce_product_id() ' . 
+                ' variation not found, must be first variation which does not have SKU. Using productId instead.');
+        
+                // First variation doesn't have a SKU, instead use product Id            
+                $sku = $wpdb->get_var($wpdb->prepare(
+                    "SELECT meta_value FROM " . $wpdb->postmeta . 
+                    " WHERE meta_key = '_sku' AND post_id = '%s' LIMIT 1", $woocommerce_product_id));              
+            }
+                        
+        }
+        else
+        {
+            // Not a variation
+            $sku = $wpdb->get_var($wpdb->prepare(
+                    "SELECT meta_value FROM " . $wpdb->postmeta . 
+                    " WHERE meta_key = '_sku' AND post_id = '%s' LIMIT 1", $woocommerce_product_id));
+        }
+        
+        return $sku;
     }
 
     
