@@ -27,7 +27,7 @@ include_once(dirname(__FILE__) . '/class-easify-generic-shop.php');
  * required for use by the Easify_Generic_Web_Service class.
  * 
  * @class       Easify_Generic_Shop
- * @version     4.19
+ * @version     4.21
  * @package     easify-woocommerce-connector
  * @author      Easify 
  */
@@ -429,14 +429,14 @@ class Easify_WC_Shop extends Easify_Generic_Shop {
             
             // WooCommerce has a separate status value for in stock / out of stock, set it 
             // according to stock level...
-            if ($stockLevel > 0)
+            if ($stockLevel > 0 || $this->ProductAllowsBackorders($ProductId))
             {
                 $this->DeleteOutofStockTermRelationship($ProductId);                             
                 update_post_meta($ProductId, '_stock_status', 'instock');                
             }
             else
             {
-                update_post_meta($ProductId, '_stock_status', 'outofstock');                   
+                update_post_meta($ProductId, '_stock_status', 'outofstock');                            
             }
                                   
             // This needs to be free stock level not on hand stock level (Stock level minus amount of stock allocated to other orders)...
@@ -450,6 +450,25 @@ class Easify_WC_Shop extends Easify_Generic_Shop {
         }
     }
 
+    public function ProductAllowsBackorders($WooProductId) {
+        try {
+                Easify_Logging::Log("Easify_WC_Shop.ProductAllowsBackorders() - WooProductId: " . $WooProductId); 
+                
+                global $wpdb;
+                $AllowBackorders = $wpdb->get_var($wpdb->prepare(
+                        "SELECT meta_value FROM " . $wpdb->postmeta . 
+                        " WHERE meta_key = '_backorders' AND post_id = '%s' LIMIT 1", $WooProductId
+                ));
+                
+                Easify_Logging::Log("Easify_WC_Shop.ProductAllowsBackorders() - AllowBackorders: " . $AllowBackorders);      
+                                
+                return $AllowBackorders === 'yes' || $AllowBackorders === 'notify';                    
+        } catch (Exception $e) {
+            Easify_Logging::Log("ProductAllowsBackorders Exception: " . $e->getMessage() . "\n");
+            return false;
+        }
+    }
+    
      public function UpdateProductPrice($EasifySku) {
         try {
             /* Autocomplete hints... */  

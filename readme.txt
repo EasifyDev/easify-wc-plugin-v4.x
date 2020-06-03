@@ -4,7 +4,7 @@ Donate link: http://www.easify.co.uk/
 Tags: easify, epos, epos software, stock control software, accounting software, invoicing software, small business software, ecommerce, e-commerce, woothemes, wordpress ecommerce, woocommerce, shopping cart
 Requires at least: 4.0
 Tested up to: 5.4
-Stable tag: 4.20
+Stable tag: 4.21
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 WC tested up to: 4.1
@@ -100,6 +100,8 @@ support@easify.co.uk
 8. Logging, if you need it you can enable detailed logging for the Easify WooCommerce Plugin.
 
 == Changelog ==
+= 4.21 =
+* Fixed issue with backorders not being allowed when stock level reaches zero.
 = 4.20 =
 * Added support for WooCommerce product variations. See https://www.easify.co.uk/Help/ecommerce-woocommerce-product-variations
 = 4.19 =
@@ -166,5 +168,5 @@ product WooCommerce gallery (requires you to be running Easify V4.56 or later).
 * Initial release for Easify V4.x.
 
 == Upgrade Notice ==
-= 4.20 =
-* Added support for WooCommerce product variations. See https://www.easify.co.uk/Help/ecommerce-woocommerce-product-variations
+= 4.21 =
+* Fixed issue with backorders not being allowed when stock level reaches zero.
