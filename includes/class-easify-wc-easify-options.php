@@ -22,7 +22,7 @@ require_once( 'easify-generic-constants.php' );
  * Provides easy access to the Easify options that are stored in WordPress
  * 
  * @class       Easify_WC_Easify_Options
- * @version     4.19
+ * @version     4.22
  * @package     easify-woocommerce-connector
  * @author      Easify 
  */
@@ -337,15 +337,18 @@ class Easify_WC_Easify_Options {
      * @param string $payment_method
      * @return boolean Returns true if the payment method is enabled.
      */
-    public function is_payment_method_enabled($payment_method) {
+    public function is_payment_method_enabled($payment_method) {       
         if (!isset($this->payment_options['easify_payment_mapping'][$payment_method]['raise'])) {
+            Easify_Logging::Log('Easify_WC_Easify_Options::is_payment_method_enabled() payment mapping not set for: ' . $payment_method);            
             return false;
         }
 
         if ($this->payment_options['easify_payment_mapping'][$payment_method]['raise'] == 'true') {
+            Easify_Logging::Log('Easify_WC_Easify_Options::is_payment_method_enabled() payment method enabled: ' . $payment_method);                
             return true;
         }
 
+            Easify_Logging::Log('Easify_WC_Easify_Options::is_payment_method_enabled() payment method not enabled: ' . $payment_method);                        
         return false;
     }
 
@@ -358,10 +361,14 @@ class Easify_WC_Easify_Options {
      * NULL if no payment mapping found.
      */
     public function get_payment_mapping_by_payment_method_name($payment_method_name) {
+        Easify_Logging::Log('Easify_WC_Easify_Options::get_payment_mapping_by_payment_method_name() ' . $payment_method_name);  
+                    
         if (isset($this->payment_options['easify_payment_mapping'][$payment_method_name])) {
+            Easify_Logging::Log('Easify_WC_Easify_Options::get_payment_mapping_by_payment_method_name() ' . $payment_method_name . ' mapping set');  
             return $this->payment_options['easify_payment_mapping'][$payment_method_name];
         }
 
+        Easify_Logging::Log('Easify_WC_Easify_Options::get_payment_mapping_by_payment_method_name() ' . $payment_method_name . ' mapping not set');          
         return NULL;
     }
 
@@ -373,10 +380,10 @@ class Easify_WC_Easify_Options {
      */
     public function get_payment_comment_by_payment_method_name($payment_method_name) {
         if (!isset($this->payment_options['easify_payment_comment'])) {
-            return '';
+            return 'Paid via ' . $payment_method_name;
         }
 
-        return $this->payment_options['easify_payment_comment'];
+        return $this->payment_options['easify_payment_comment'] . ' (' . $payment_method_name . ')';
     }
 
     /**

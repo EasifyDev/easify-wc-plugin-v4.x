@@ -30,7 +30,7 @@ require_once ( 'class-easify-wc-woocommerce-order.php' );
  * be queued for delivery to the relevant Easify Server.
  * 
  * @class       Easify_WC_Send_Order_To_Easify
- * @version     4.20
+ * @version     4.22
  * @package     easify-woocommerce-connector
  * @author      Easify 
  */
@@ -376,18 +376,31 @@ class Easify_WC_Send_Order_To_Easify {
     }
 
     private function do_payment() {
-        // If this payment method has not been enabled in Easify Options, do nothing    
-        if (!$this->easify_options->is_payment_method_enabled($this->woocommerce_order->payment_method)) {
-            return;
-        }
-
+        Easify_Logging::Log('Easify_WC_Send_Order_To_Easify.do_payment() Payment Method: ' . $this->woocommerce_order->payment_method);
+            
         // Get the payment mapping details from the Easify options...
         $payment_mapping = $this->easify_options->get_payment_mapping_by_payment_method_name($this->woocommerce_order->payment_method);
-
+       
         if ($payment_mapping == NULL) {
             // Use default payment mapping if no matching mapping found - i.e.
             // if WooCommerce has a payment method that we don't support.
-            $payment_mapping = $this->easify_options->get_payment_mapping_by_payment_method_name('Default');
+            Easify_Logging::Log('Easify_WC_Send_Order_To_Easify.do_payment() - unknown payment method, using default.');                
+                
+            $payment_mapping = $this->easify_options->get_payment_mapping_by_payment_method_name('default');
+                       
+            // If this payment method has not been enabled in Easify Options, do nothing    
+            if (!$this->easify_options->is_payment_method_enabled('default')) {
+                Easify_Logging::Log('Easify_WC_Send_Order_To_Easify.do_payment() - default payment method not enabled, ignoring.');                
+                return;
+            }         
+        }
+        else {
+            // We have a payment mapping use it and make sure it is enabled...
+            // If this payment method has not been enabled in Easify Options, do nothing    
+            if (!$this->easify_options->is_payment_method_enabled($this->woocommerce_order->payment_method)) {
+                Easify_Logging::Log('Easify_WC_Send_Order_To_Easify.do_payment() - payment method not enabled, ignoring.');
+                return;
+            }            
         }
 
         $easify_order_payment = new Easify_Order_Payments();

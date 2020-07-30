@@ -29,7 +29,7 @@ require_once ( 'class-easify-generic-crypto.php' );
  * updates to the settings and validation.
  * 
  * @class       Easify_WC__Plugin_Settings_Page
- * @version     4.19
+ * @version     4.22
  * @package     easify-woocommerce-connector
  * @author      Easify 
  */
@@ -1924,7 +1924,9 @@ class Easify_WC__Plugin_Settings_Page {
                 <h3>Easify Payment Comment</h3>
                 <p>When an order is placed via WooCommerce, it will be sent to your Easify Server and a payment record will be created 
                     in Easify.</p>
-                <p>Here you can enter the comment that will be added to the payment record in Easify.</p>                
+                <p>Here you can enter the comment that will be added to the payment record in Easify.</p>    
+                <p>The payment method used by the customer will be appended to this value so if the customer pays using stripe 
+                the comment on the payment record in Easify will be 'Payment via website (stripe)'.</p>
                 <?= $this->tooltip_click_here_link('payments-comment') ?>              
             </div>                        
 
