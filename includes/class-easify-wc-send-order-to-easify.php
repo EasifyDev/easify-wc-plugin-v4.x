@@ -30,7 +30,7 @@ require_once ( 'class-easify-wc-woocommerce-order.php' );
  * be queued for delivery to the relevant Easify Server.
  * 
  * @class       Easify_WC_Send_Order_To_Easify
- * @version     4.22
+ * @version     4.23
  * @package     easify-woocommerce-connector
  * @author      Easify 
  */
@@ -125,20 +125,26 @@ class Easify_WC_Send_Order_To_Easify {
         // is paying by COD they won't have yet paid for their order and we want
         // that reflected in the Easify order.        
         if ($this->easify_options->is_payment_method_enabled($this->woocommerce_order->payment_method)) {
-            $this->easify_order_model->Paid = true;
+            Easify_Logging::Log("Easify_WC_Send_Order_To_Easify.do_order() - payment method " . 
+                    $this->woocommerce_order->payment_method . " enabled, marking order as paid.");
+            
+            $this->easify_order_model->Paid = 'true'; // Set as string otherwise true in PHP becomes 1 and the WebAPI mapper in CloudAPI thinks it's an int
             $this->easify_order_model->DatePaid = $this->get_formatted_date();
         } else {
             // If customer is paying later (COD, BACS, Cheque) no payment record will be
             // raised in Easify but we still need to record how they intend to pay.
             // Record payment method in internal notes to let Easify know how the 
             // customer intends to pay for the order...
-            $this->easify_order_model->Paid = false;
+            Easify_Logging::Log("Easify_WC_Send_Order_To_Easify.do_order() - payment method " . 
+                    $this->woocommerce_order->payment_method . " NOT enabled, NOT marking order as paid.");
+            
+            $this->easify_order_model->Paid = 'false';
             $this->easify_order_model->DatePaid = NULL;
             $this->easify_order_model->Notes = "Payment to follow - Payment method: " . $this->woocommerce_order->payment_method . ". ";
         }
 
         $this->easify_order_model->CustomerRef = "";
-        $this->easify_order_model->Invoiced = true;
+        $this->easify_order_model->Invoiced = 'true';
         $this->easify_order_model->DateInvoiced = $this->get_formatted_date();
         $this->easify_order_model->Comments = $this->easify_options->get_easify_order_comment() . " " . $this->woocommerce_order->order_no;
 
@@ -149,10 +155,10 @@ class Easify_WC_Send_Order_To_Easify {
         $this->easify_order_model->DateOrdered = $this->get_formatted_date();
         $this->easify_order_model->DueDate = $this->get_formatted_date();
         $this->easify_order_model->DueTime = $this->get_formatted_date();
-        $this->easify_order_model->Scheduled = false;
+        $this->easify_order_model->Scheduled = 'false';
         $this->easify_order_model->Duration = 0;
         $this->easify_order_model->Priority = 0;
-        $this->easify_order_model->Recurring = false;
+        $this->easify_order_model->Recurring = 'false';
         $this->easify_order_model->RecurTimePeriod = 0;
         $this->easify_order_model->DueDate2 = $this->get_formatted_date();
         $this->easify_order_model->DueTime2 = $this->get_formatted_date();
@@ -246,7 +252,7 @@ class Easify_WC_Send_Order_To_Easify {
             $easify_order_detail->ExtParentId = 0;
             $easify_order_detail->ExtOrderDetailsId = $woocommerce_product['product_id'];
             $easify_order_detail->ExtOrderNo = $this->woocommerce_order->order_no;
-            $easify_order_detail->AutoAllocateStock = true;
+            $easify_order_detail->AutoAllocateStock = 'true';
 
             // Add the order detail to the Easify order model
             array_push($this->easify_order_model->OrderDetails, $easify_order_detail);
@@ -276,7 +282,7 @@ class Easify_WC_Send_Order_To_Easify {
             $easify_order_detail->Spare = '';
             $easify_order_detail->ExtParentId = 0;
             $easify_order_detail->ExtOrderNo = $this->woocommerce_order->order_no;
-            $easify_order_detail->AutoAllocateStock = false;
+            $easify_order_detail->AutoAllocateStock = 'false';
 
             // Add the order detail to the Easify order model
             array_push($this->easify_order_model->OrderDetails, $easify_order_detail);
@@ -367,7 +373,7 @@ class Easify_WC_Send_Order_To_Easify {
                 $easify_order_detail->ExtParentId = 0;
                 $easify_order_detail->ExtOrderDetailsId = 0;
                 $easify_order_detail->ExtOrderNo = $this->woocommerce_order->order_no;
-                $easify_order_detail->AutoAllocateStock = true;
+                $easify_order_detail->AutoAllocateStock = 'true';
 
                 // Add the order detail to the Easify order model
                 array_push($this->easify_order_model->OrderDetails, $easify_order_detail);
