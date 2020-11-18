@@ -27,7 +27,7 @@ include_once(dirname(__FILE__) . '/class-easify-generic-shop.php');
  * required for use by the Easify_Generic_Web_Service class.
  * 
  * @class       Easify_Generic_Shop
- * @version     4.21
+ * @version     4.24
  * @package     easify-woocommerce-connector
  * @author      Easify 
  */
@@ -808,13 +808,19 @@ class Easify_WC_Shop extends Easify_Generic_Shop {
     }
 
     private function InsertCategoryIntoWooCommerce($Name, $Description) {
-        Easify_Logging::Log("Easify_WC_Shop.InsertCategoryIntoWooCommerce()");
+        $SanitizedName = $this->SanitizeTerm($Name);
+        
+        Easify_Logging::Log("Easify_WC_Shop.InsertCategoryIntoWooCommerce() Name: " . $Name . 
+                " Sanitized Name: " . $SanitizedName .
+                " Description: " . $Description);
 
-        $Term = term_exists($Name, 'product_cat');
+        $Term = term_exists($SanitizedName, 'product_cat');
 
         // if category doesn't exist, create it
         if ($Term == 0 || $Term == null) {
-            $Term = wp_insert_term($Name, 'product_cat', array('description' => $Description, 'slug' => CreateSlug($Name)));
+            $Term = wp_insert_term($SanitizedName, 'product_cat', array('description' => $Description, 'slug' => CreateSlug($Name)));
+            if (is_wp_error($Term))
+                Easify_Logging::Log("Easify_WC_Shop.InsertCategoryIntoWooCommerce() - ERROR: " . $Term->get_error_message());            
             $CategoryId = $Term['term_id'];
         } else
             $CategoryId = $Term['term_id'];
@@ -823,16 +829,21 @@ class Easify_WC_Shop extends Easify_Generic_Shop {
     }
 
     private function InsertSubCategoryIntoWooCommerce($Name, $Description, $ParentId) {
-        Easify_Logging::Log("Easify_WC_Shop.InsertSubCategoryIntoWooCommerce()");
-
+        $SanitizedName = $this->SanitizeTerm($Name);
+        
+        Easify_Logging::Log("Easify_WC_Shop.InsertSubCategoryIntoWooCommerce() Name: " . $Name . 
+                " Sanitized Name: " . $SanitizedName .
+                " Description: " . $Description . 
+                " ParentId: " . $ParentId);
+       
         // NB. if two sub categories have the same slug, Term can return NULL even though the subcategory exists
-        $Term = term_exists($Name, 'product_cat', $ParentId);
+        $Term = term_exists($SanitizedName, 'product_cat', $ParentId);
 
         // if subcategory doesn't exist, create it
         if ($Term == 0 || $Term == null) {
-            $Term = wp_insert_term($Name, 'product_cat', array('description' => $Description, 'slug' => CreateSlug($Name), 'parent' => $ParentId));
+            $Term = wp_insert_term($SanitizedName, 'product_cat', array('description' => $Description, 'slug' => CreateSlug($Name), 'parent' => $ParentId));
             if (is_wp_error($Term))
-                Easify_Logging::Log($Term);
+                Easify_Logging::Log("Easify_WC_Shop.InsertSubCategoryIntoWooCommerce() - ERROR: " . $Term->get_error_message());
             if (isset($Term['term_id']))
                 $SubCategoryId = $Term['term_id'];
         } else
@@ -841,6 +852,29 @@ class Easify_WC_Shop extends Easify_Generic_Shop {
         return $SubCategoryId;
     }
 
+    /**
+    * When inserting a term using wp_insert_term() or checking to see if a term 
+    * exists using term_exists() you need to sanitize the name in case it 
+    * contains characters such as '&'. These will save OK if you don't sanitize, 
+    * but when you call term_exists() for a term that was un-sanitized with a 
+    * '&' in it, it will not find the term.
+    * 
+    * @param type $Name
+    */ 
+    private function SanitizeTerm($Name){
+          $sanitized_term = sanitize_term(
+            array( 
+                'alias_of' => '', 
+                'description' => '', 
+                'parent' => 0, 'slug' => '', 
+                'name' => $Name, 
+                'taxonomy' => ''
+                ),
+            $taxonomy);     
+          
+          return $sanitized_term['name'];
+    }
+    
     private function UpdateDeliveryPrice($SKU, $Price) {
         Easify_Logging::Log("Easify_WC_Shop.UpdateDeliveryPrice()");
 
