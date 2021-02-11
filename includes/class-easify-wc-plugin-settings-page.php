@@ -29,7 +29,7 @@ require_once ( 'class-easify-generic-crypto.php' );
  * updates to the settings and validation.
  * 
  * @class       Easify_WC__Plugin_Settings_Page
- * @version     4.22
+ * @version     4.25
  * @package     easify-woocommerce-connector
  * @author      Easify 
  */
@@ -1433,6 +1433,27 @@ class Easify_WC__Plugin_Settings_Page {
                 </tr>
                 <tr>
                     <td>
+                        Stripe
+                    </td>
+                    <td>
+                        <?php
+                        $this->setting_html_easify_payment_method_id('stripe');
+                        ?>
+                    </td>
+                    <td>
+                        <?php
+                        $this->setting_html_easify_payment_account_id('stripe');
+                        ?>
+                    </td>
+                    <td>
+                        <?php
+                        $this->setting_html_easify_payment_raise('stripe');
+                        $this->tool_tip('payment-mapping-stripe-tip');
+                        ?>				
+                    </td>
+                </tr>                
+                <tr>
+                    <td>
                         Default
                     </td>
                     <td>
@@ -2026,6 +2047,23 @@ class Easify_WC__Plugin_Settings_Page {
                     <?= $this->tooltip_click_here_link('payments-bacs') ?>                
             </div>              
 
+           
+            <div id="payment-mapping-stripe-tip">
+                <h3>Stripe Mapping</h3>
+                <p>When an order is placed via WooCommerce, it will be sent to your Easify Server along with a payment record that describes
+                    how the order was paid for. Here you can configure how the payment records are sent to your Easify server.</p>   
+                <p><b>Easify Payment Method:</b> Select which payment method will be 
+                    recorded in Easify for payments received via Stripe. <i>We recommend 
+                        selecting <b>Credit Card</b></i>.<p>
+                <p><b>Easify Payment Account:</b> Select which account the payment will 
+                    be associated with in Easify for payments received via Stripe. <i>We recommend 
+                        selecting <b>Current</b></i>.<p>                   
+                <p><b>Enabled:</b> Tick this to enable payments to be recorded in Easify when a 
+                    payment is received via Stripe. <i>We recommend <b>enabling</b> Stripe payments to be sent to 
+                        Easify as the payment will have been approved.</i><p>                 
+                    <?= $this->tooltip_click_here_link('payments-stripe') ?>                
+            </div>  
+            
             <div id="payment-mapping-default-tip">
                 <h3>Default Payment Mapping</h3>
                 <p>When an order is placed via WooCommerce, it will be sent to your Easify Server along with a payment record that describes

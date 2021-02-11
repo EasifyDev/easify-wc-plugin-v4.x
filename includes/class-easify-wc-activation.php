@@ -27,7 +27,7 @@ require_once( 'class-easify-generic-basic-auth.php' );
  * WooCommerce Plugin when the plugin is activated.
  * 
  * @class       Easify_WC_Activation
- * @version     4.0
+ * @version     4.25
  * @package     easify-woocommerce-connector
  * @author      Easify 
  */
@@ -107,6 +107,11 @@ class Easify_WC_Activation{
                             "account_id" => "1",
                             "raise" => "false"
                         ),
+                        "stripe" => array(
+                            "method_id" => "7",
+                            "account_id" => "1",
+                            "raise" => "true"
+                        ),                    
                         "default" => array(
                             "method_id" => "8",
                             "account_id" => "1",

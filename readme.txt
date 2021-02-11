@@ -3,11 +3,11 @@ Contributors: easify
 Donate link: http://www.easify.co.uk/
 Tags: easify, epos, epos software, stock control software, accounting software, invoicing software, small business software, ecommerce, e-commerce, woothemes, wordpress ecommerce, woocommerce, shopping cart
 Requires at least: 4.0
-Tested up to: 5.4
-Stable tag: 4.24
+Tested up to: 5.6
+Stable tag: 4.25
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
-WC tested up to: 4.6
+WC tested up to: 5.0
 
 Connects Easify V4.x Small Business Software to your WooCommerce online shop, 
 allowing you to synchronise stock levels between your physical shop and your
@@ -100,6 +100,9 @@ support@easify.co.uk
 8. Logging, if you need it you can enable detailed logging for the Easify WooCommerce Plugin.
 
 == Changelog ==
+= 4.25 =
+* Added support for native WooCommerce Stripe payment plugin on Payments tab of
+Easify Plugin Settings page.
 = 4.24 =
 * Fixed scenario whereby for certain configurations product categories with an 
 '&' character in the name could get duplicated in WooCommerce.
@@ -177,6 +180,6 @@ product WooCommerce gallery (requires you to be running Easify V4.56 or later).
 * Initial release for Easify V4.x.
 
 == Upgrade Notice ==
-= 4.24 =
-* Fixed scenario whereby for certain configurations product categories with an 
-'&' character in the name could get duplicated in WooCommerce.
+= 4.25 =
+* Added support for native WooCommerce Stripe payment plugin on Payments tab of
+Easify Plugin Settings page.
