@@ -4,14 +4,17 @@
  * Plugin Name: Easify Server WooCommerce
  * Plugin URI: http://www.easify.co.uk/wordpress/
  * Description: Connects Easify Business Management, EPOS (Electronic Point of Sale) and invoicing software to your WooCommerce enabled WordPress website. Allowing you to keep your online and offline shop's orders and stock control synchronised.
- * Version: 4.25
+ * Version: 4.26
  * License: GPL2
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Author: Easify
  * Author URI: http://www.easify.co.uk/
  * Requires at least: 4.0
- * Tested up to: 5.6
+ * Tested up to: 5.7
  * WC tested up to: 5.0
+ *
+ * @package easify-woocommerce-connector
+ * @link    https://www.easify.co.uk
  */
 
 /**
@@ -20,54 +23,51 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-// Exit if accessed directly
-if (!defined('ABSPATH')) {
-    exit;
+// Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
 }
 
 // Logging can be enabled either in the Easify Plugin Options (via the database)
 // or in the easify-generic-constants.php file.
-if (!defined('EASIFY_LOGGING_BY_DB_FLAG')) {
-    if (!empty(get_option('easify_options_logging')))
-    {
-        define('EASIFY_LOGGING_BY_DB_FLAG', get_option('easify_options_logging')['easify_logging_enabled']);
-    }    
-    else
-    {
-        define('EASIFY_LOGGING_BY_DB_FLAG', false);      
-    }
+if ( ! defined( 'EASIFY_LOGGING_BY_DB_FLAG' ) ) {
+	if ( ! empty( get_option( 'easify_options_logging' ) ) ) {
+		define( 'EASIFY_LOGGING_BY_DB_FLAG', get_option( 'easify_options_logging' )['easify_logging_enabled'] );
+	} else {
+		define( 'EASIFY_LOGGING_BY_DB_FLAG', false );
+	}
 }
 
-if (!defined('PLUGIN_ROOT_PATH')) {
-    define('PLUGIN_ROOT_PATH', __FILE__);
+if ( ! defined( 'PLUGIN_ROOT_PATH' ) ) {
+	define( 'PLUGIN_ROOT_PATH', __FILE__ );
 }
 
-// Includes
-require_once( 'includes/class-easify-generic-logging.php' );
-require_once( 'includes/class-easify-wc-activation.php' );
-require_once( 'includes/class-easify-wc-plugin.php' );
-require_once( 'includes/class-easify-wc-plugin-settings-page.php' );
-require_once( 'includes/easify-generic-constants.php' );
+// Includes.
+require_once 'includes/class-easify-generic-logging.php';
+require_once 'includes/class-easify-wc-activation.php';
+require_once 'includes/class-easify-wc-plugin.php';
+require_once 'includes/class-easify-wc-plugin-settings-page.php';
+require_once 'includes/easify-generic-constants.php';
 
-// Wire up plugin activation class
+// Wire up plugin activation class.
 $ewci = new Easify_WC_Activation();
 
-// Initialise the plugin for action
+// Initialise the plugin for action.
 $ewcc = new Easify_WC_Plugin();
 
-// Initialise settings if logged in user is admin
-if (is_admin()) {
-    $ewcsp = new Easify_WC__Plugin_Settings_Page();
+// Initialise settings if logged in user is admin.
+if ( is_admin() ) {
+	$ewcsp = new Easify_WC__Plugin_Settings_Page();
 }
 ?>

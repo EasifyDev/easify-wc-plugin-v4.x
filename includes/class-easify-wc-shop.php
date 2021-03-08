@@ -27,7 +27,7 @@ include_once(dirname(__FILE__) . '/class-easify-generic-shop.php');
  * required for use by the Easify_Generic_Web_Service class.
  * 
  * @class       Easify_Generic_Shop
- * @version     4.24
+ * @version     4.26
  * @package     easify-woocommerce-connector
  * @author      Easify 
  */
@@ -215,17 +215,89 @@ class Easify_WC_Shop extends Easify_Generic_Shop {
             /* Autocomplete hints... */  
             /* @var $Product ProductDetails */    
             
+            /* Moved stock level and price changing code to start of method so that
+             * we can still allow stock level and price changes even if product
+             * updtes are disabled in config. */
+            
+            $Product = $this->easify_server->GetProductFromEasify($EasifySku);
+                                  
+            // Get WooCommerce product id from Easify SKU
+            $ProductId = $this->GetWooCommerceProductIdFromEasifySKU($Product->SKU);
+                       
+            // STOCK LEVELS          
+            $updateStockLevels = !$this->easify_options->get_easify_dont_update_product_stock_levels();
+            
+            if ($updateStockLevels)
+            {            
+                Easify_Logging::Log("Easify_WC_Shop.UpdateProduct() - Updating of stock levels enabled.");
+                
+                // handling stock - we get free stock minus allocated stock
+                $stockLevel = $Product->StockLevel - $this->easify_server->get_allocation_count_by_easify_sku($Product->SKU);
+
+                // WooCommerce has a separate status value for in stock / out of stock, set it 
+                // according to stock level...
+                if ($stockLevel > 0)
+                {
+                    $this->DeleteOutofStockTermRelationship($ProductId);                                  
+                    update_post_meta($ProductId, '_stock_status', 'instock');                
+                }
+                else
+                {
+                    update_post_meta($ProductId, '_stock_status', 'outofstock');                   
+                }
+
+                update_post_meta($ProductId, '_manage_stock', 'yes');
+                update_post_meta($ProductId, '_downloadable', 'no');
+                update_post_meta($ProductId, '_virtual', 'no');
+                update_post_meta($ProductId, '_visibility', 'visible');
+                update_post_meta($ProductId, '_sold_individually', '');
+                update_post_meta($ProductId, '_manage_stock', 'yes');
+                update_post_meta($ProductId, '_backorders', 'no');
+
+                // This needs to be free stock level not on hand stock level (Stock level minus amount of stock allocated to other orders)...
+                Easify_Logging::Log("Easify_WC_Shop.UpdateProduct() - Updating stock level.");                     
+                update_post_meta($ProductId, '_stock', $stockLevel);
+            } else{
+                Easify_Logging::Log("Easify_WC_Shop.UpdateProduct() - Updating of stock levels disabled.");
+            }            
+            
+            
+            // PRICES
+            $updateProductPrice = !($this->easify_options->get_easify_dont_update_product_prices());
+            
+            if ($updateProductPrice){
+                Easify_Logging::Log("Easify_WC_Shop.UpdateProduct() - Updating of product price enabled."); 
+                
+                // calculate price from retail margin and cost price
+                $Price = round(($Product->CostPrice / (100 - $Product->RetailMargin) * 100), 4);
+
+                $TaxClass = $this->GetWooCommerceTaxIdByEasifyTaxId($Product->TaxId);
+
+                // pricing
+                update_post_meta($ProductId, '_sku', $Product->SKU);
+                update_post_meta($ProductId, '_price', $Price);
+                update_post_meta($ProductId, '_regular_price', $Price);
+                update_post_meta($ProductId, '_sale_price', $Price);
+                update_post_meta($ProductId, '_sale_price_dates_from	', '');
+                update_post_meta($ProductId, '_sale_price_dates_to', '');
+                update_post_meta($ProductId, '_tax_status', 'taxable');
+                update_post_meta($ProductId, '_tax_class', strtolower($TaxClass));                               
+            }
+            else{
+               Easify_Logging::Log("Easify_WC_Shop.UpdateProduct() - Updating of product price disabled."); 
+            }
+            
             
             // Determine whether ignore product uploads
             if ($this->easify_options->get_easify_dont_upload_products())
             {
-                Easify_Logging::Log('Easify_WC_Shop.UpdateProduct() - Easify plugin settings dictate ignore product uploads. Not uploading.');                
+                Easify_Logging::Log('Easify_WC_Shop.UpdateProduct() - Easify plugin settings dictate ignore product uploads. Not uploading product.');                
                 return;            
             } 
             
             if ($this->easify_options->get_easify_ignore_product_updates())
             {
-                Easify_Logging::Log('Easify_WC_Shop.UpdateProduct() - Easify plugin settings dictate ignore product updates. Not updating.');                
+                Easify_Logging::Log('Easify_WC_Shop.UpdateProduct() - Easify plugin settings dictate ignore product updates. Not updating info.');                
                 return;            
             }            
             
@@ -234,9 +306,7 @@ class Easify_WC_Shop extends Easify_Generic_Shop {
             if (empty($this->easify_server)) {
                 Easify_Logging::Log("Easify_WC_Shop.UpdateProduct() - Easify Server is NULL");
             }
- 
-            $Product = $this->easify_server->GetProductFromEasify($EasifySku);
-            
+      
             if ($Product->Published == FALSE) {
                 Easify_Logging::Log('Easify_WC_Shop.UpdateProduct() - Not published, deleting product and not updating.');
                 $this->DeleteProduct($EasifySku);
@@ -249,18 +319,15 @@ class Easify_WC_Shop extends Easify_Generic_Shop {
                 return;
             }           
             
-            // calculate price from retail margin and cost price
-            $Price = round(($Product->CostPrice / (100 - $Product->RetailMargin) * 100), 4);
-
-            
-            // Determine whether ignore product price changes
+            // If this is an update to a delivery product, don't need to update 
+            // anything other than price (which has already been handled).
             if (!$this->easify_options->get_easify_dont_update_product_prices())
             {
                 // catch reserved delivery SKUs and update delivery prices
                 if ($this->UpdateDeliveryPrice($Product->SKU, $Price))
                 {
                     Easify_Logging::Log("Easify_WC_Shop.UpdateProduct() - Product was delivery SKU, updated price and nothing more to do.");
-                     return;               
+                    return;               
                 }                
             } 
         
@@ -290,9 +357,6 @@ class Easify_WC_Shop extends Easify_Generic_Shop {
                 $SubCategoryId = $this->InsertSubCategoryIntoWooCommerce($SubCategoryDescription, $SubCategoryDescription, $CategoryId);                
             }
             
-            // get WooCommerce product id from Easify SKU
-            $ProductId = $this->GetWooCommerceProductIdFromEasifySKU($Product->SKU);
-
             // create a WooCommerce stub for the new product
             $ProductStub = array(
                 'ID' => $ProductId,
@@ -313,59 +377,12 @@ class Easify_WC_Shop extends Easify_Generic_Shop {
                 wp_set_post_terms($ProductId, array($SubCategoryId), "product_cat");            
             }
 
-            // get WooCommerce tax class from Easify tax id
-            $TaxClass = $this->GetWooCommerceTaxIdByEasifyTaxId($Product->TaxId);
-
             // Easify_Logging::Log("UpdateProduct.TaxClass: " . $TaxClass);
 
             /*
               flesh out product record meta data
              */
-
-            if (!$this->easify_options->get_easify_dont_update_product_prices())
-            {
-                // pricing
-                update_post_meta($ProductId, '_sku', $Product->SKU);
-                update_post_meta($ProductId, '_price', $Price);
-                update_post_meta($ProductId, '_regular_price', $Price);
-                update_post_meta($ProductId, '_sale_price', $Price);
-                update_post_meta($ProductId, '_sale_price_dates_from	', '');
-                update_post_meta($ProductId, '_sale_price_dates_to', '');
-                update_post_meta($ProductId, '_tax_status', 'taxable');
-                update_post_meta($ProductId, '_tax_class', strtolower($TaxClass));
-            }
-            
-            
-            if (!$this->easify_options->get_easify_dont_update_product_stock_levels())
-            {            
-                // handling stock - we get free stock minus allocated stock
-                $stockLevel = $Product->StockLevel - $this->easify_server->get_allocation_count_by_easify_sku($Product->SKU);
-
-                // WooCommerce has a separate status value for in stock / out of stock, set it 
-                // according to stock level...
-                if ($stockLevel > 0)
-                {
-                    $this->DeleteOutofStockTermRelationship($ProductId);                                  
-                    update_post_meta($ProductId, '_stock_status', 'instock');                
-                }
-                else
-                {
-                    update_post_meta($ProductId, '_stock_status', 'outofstock');                   
-                }
-
-                update_post_meta($ProductId, '_manage_stock', 'yes');
-                update_post_meta($ProductId, '_downloadable', 'no');
-                update_post_meta($ProductId, '_virtual', 'no');
-                update_post_meta($ProductId, '_visibility', 'visible');
-                update_post_meta($ProductId, '_sold_individually', '');
-                update_post_meta($ProductId, '_manage_stock', 'yes');
-                update_post_meta($ProductId, '_backorders', 'no');
-
-                // This needs to be free stock level not on hand stock level (Stock level minus amount of stock allocated to other orders)...
-                Easify_Logging::Log("Easify_WC_Shop.UpdateProduct() - Updating stock level.");                     
-                update_post_meta($ProductId, '_stock', $stockLevel);
-            }
-            
+                                 
             // physical properties
             update_post_meta($ProductId, '_weight', $Product->Weight);
             update_post_meta($ProductId, '_length', '');
