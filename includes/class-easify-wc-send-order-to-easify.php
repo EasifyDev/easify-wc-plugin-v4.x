@@ -207,7 +207,8 @@ class Easify_WC_Send_Order_To_Easify {
 		$this->easify_order_model->Customer->Address2            = $this->woocommerce_order->order_post_meta['_billing_address_2'][0];
 		$this->easify_order_model->Customer->Address3            = '';
 		$this->easify_order_model->Customer->Town                = $this->woocommerce_order->order_post_meta['_billing_city'][0];
-		$this->easify_order_model->Customer->County              = $this->woocommerce_order->order_post_meta['_billing_postcode'][0];
+		$this->easify_order_model->Customer->County              = $this->woocommerce_order->order_post_meta['_billing_state'][0];
+		$this->easify_order_model->Customer->Postcode            = $this->woocommerce_order->order_post_meta['_billing_postcode'][0];
 		$this->easify_order_model->Customer->Country             = $this->woocommerce_order->order_post_meta['_billing_country'][0];
 		$this->easify_order_model->Customer->HomeTel             = $this->woocommerce_order->order_post_meta['_billing_phone'][0];
 		$this->easify_order_model->Customer->Email               = $this->woocommerce_order->order_post_meta['_billing_email'][0];
