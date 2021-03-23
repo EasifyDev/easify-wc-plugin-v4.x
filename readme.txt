@@ -4,7 +4,7 @@ Donate link: http://www.easify.co.uk/
 Tags: easify, epos, epos software, stock control software, accounting software, invoicing software, small business software, ecommerce, e-commerce, woothemes, wordpress ecommerce, woocommerce, shopping cart
 Requires at least: 4.0
 Tested up to: 5.7
-Stable tag: 4.27
+Stable tag: 4.28
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 WC tested up to: 5.0
@@ -100,6 +100,9 @@ support@easify.co.uk
 8. Logging, if you need it you can enable detailed logging for the Easify WooCommerce Plugin.
 
 == Changelog ==
+= 4.28 =
+* Resolved issue where for certain configurations, WooCommerce product inventory 'Allow backorders'
+* could be set to 'Do not allow' when product stock levels updated.
 = 4.27 =
 * Resolved issue where customer billing postcode could appear in billing county in Easify Pro.
 = 4.26 =
@@ -189,5 +192,6 @@ product WooCommerce gallery (requires you to be running Easify V4.56 or later).
 * Initial release for Easify V4.x.
 
 == Upgrade Notice ==
-= 4.27 =
-* Resolved issue where customer billing postcode could appear in billing county in Easify Pro.
+= 4.28 =
+* Resolved issue where for certain configurations, WooCommerce product inventory 'Allow backorders'
+* could be set to 'Do not allow' when product stock levels updated.
