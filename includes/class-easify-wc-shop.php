@@ -27,7 +27,7 @@ include_once(dirname(__FILE__) . '/class-easify-generic-shop.php');
  * required for use by the Easify_Generic_Web_Service class.
  * 
  * @class       Easify_Generic_Shop
- * @version     4.28
+ * @version     4.29
  * @package     easify-woocommerce-connector
  * @author      Easify 
  */
@@ -232,19 +232,9 @@ class Easify_WC_Shop extends Easify_Generic_Shop {
                 Easify_Logging::Log("Easify_WC_Shop.UpdateProduct() - Updating of stock levels enabled.");
                 
                 // handling stock - we get free stock minus allocated stock
-                $stockLevel = $Product->StockLevel - $this->easify_server->get_allocation_count_by_easify_sku($Product->SKU);
+	            $stock_level = $Product->StockLevel - $this->easify_server->get_allocation_count_by_easify_sku($Product->SKU);
 
-                // WooCommerce has a separate status value for in stock / out of stock, set it 
-                // according to stock level...
-                if ($stockLevel > 0)
-                {
-                    $this->DeleteOutofStockTermRelationship($ProductId);                                  
-                    update_post_meta($ProductId, '_stock_status', 'instock');                
-                }
-                else
-                {
-                    update_post_meta($ProductId, '_stock_status', 'outofstock');                   
-                }
+	            $this->update_stock_status( $stock_level, $ProductId );
 
                 update_post_meta($ProductId, '_manage_stock', 'yes');
                 update_post_meta($ProductId, '_downloadable', 'no');
@@ -255,7 +245,7 @@ class Easify_WC_Shop extends Easify_Generic_Shop {
 
                 // This needs to be free stock level not on hand stock level (Stock level minus amount of stock allocated to other orders)...
                 Easify_Logging::Log("Easify_WC_Shop.UpdateProduct() - Updating stock level.");                     
-                update_post_meta($ProductId, '_stock', $stockLevel);
+                update_post_meta($ProductId, '_stock', $stock_level);
             } else{
                 Easify_Logging::Log("Easify_WC_Shop.UpdateProduct() - Updating of stock levels disabled.");
             }            
@@ -438,26 +428,16 @@ class Easify_WC_Shop extends Easify_Generic_Shop {
             }
             
             // handling stock - we get free stock minus allocated stock
-            $stockLevel = $Product->StockLevel - $this->easify_server->get_allocation_count_by_easify_sku($Product->SKU);
+            $stock_level = $Product->StockLevel - $this->easify_server->get_allocation_count_by_easify_sku($Product->SKU);
                       
             // get WooCommerce product id from Easify SKU
-            $ProductId = $this->GetWooCommerceProductIdFromEasifySKU($Product->SKU);
-            
-            // WooCommerce has a separate status value for in stock / out of stock, set it 
-            // according to stock level...
-            if ($stockLevel > 0 || $this->ProductAllowsBackorders($ProductId))
-            {
-                $this->DeleteOutofStockTermRelationship($ProductId);                             
-                update_post_meta($ProductId, '_stock_status', 'instock');                
-            }
-            else
-            {
-                update_post_meta($ProductId, '_stock_status', 'outofstock');                            
-            }
-                                  
-            // This needs to be free stock level not on hand stock level (Stock level minus amount of stock allocated to other orders)...
+            $product_id = $this->GetWooCommerceProductIdFromEasifySKU($Product->SKU);
+
+	        $this->update_stock_status( $stock_level, $product_id );
+
+	        // This needs to be free stock level not on hand stock level (Stock level minus amount of stock allocated to other orders).
             Easify_Logging::Log("Easify_WC_Shop.UpdateProductStockLevel() - Updating stock level.");                     
-            update_post_meta($ProductId, '_stock', $stockLevel);
+            update_post_meta($product_id, '_stock', $stock_level);
                        
             Easify_Logging::Log("Easify_WC_Shop.UpdateProductStockLevel() - End.");
         } catch (Exception $e) {
@@ -465,6 +445,33 @@ class Easify_WC_Shop extends Easify_Generic_Shop {
             throw $e;
         }
     }
+
+	/**
+	 * @param string $stock_level
+	 * @param string|null $product_id
+	 */
+	private function update_stock_status( string $stock_level, ?string $product_id ): void {
+		// WooCommerce has a separate status value for in stock / out of stock, set it
+		// according to stock level.
+		if ( $stock_level > 0 ) {
+			Easify_Logging::Log( "Easify_WC_Shop.update_stock_status() - Stock level > 0" );
+
+			$this->DeleteOutofStockTermRelationship( $product_id );
+			update_post_meta( $product_id, '_stock_status', 'instock' );
+		} else {
+			Easify_Logging::Log( "Easify_WC_Shop.update_stock_status() - Stock level == 0" );
+
+			if ( $this->ProductAllowsBackorders( $product_id ) ) {
+				Easify_Logging::Log( "Easify_WC_Shop.update_stock_status() - Product allows back order" );
+
+				update_post_meta( $product_id, '_stock_status', 'onbackorder' );
+			} else {
+				Easify_Logging::Log( "Easify_WC_Shop.update_stock_status() - Product does not allow back order" );
+
+				update_post_meta( $product_id, '_stock_status', 'outofstock' );
+			}
+		}
+	}
 
     public function ProductAllowsBackorders($WooProductId) {
         try {
@@ -1240,8 +1247,10 @@ class Easify_WC_Shop extends Easify_Generic_Shop {
         Easify_Logging::Log("Easify_WC_Shop.UpdateWPDescription() - Updating product record with HTML description.");
         wp_update_post($ProductStub);         
     }
-            
-    
+
+
+
+
 }
 
 ?>
