@@ -27,7 +27,7 @@ include_once(dirname(__FILE__) . '/class-easify-generic-shop.php');
  * required for use by the Easify_Generic_Web_Service class.
  * 
  * @class       Easify_Generic_Shop
- * @version     4.30
+ * @version     4.31
  * @package     easify-woocommerce-connector
  * @author      Easify 
  */
@@ -448,7 +448,7 @@ class Easify_WC_Shop extends Easify_Generic_Shop {
 	 * @param string $stock_level
 	 * @param string|null $product_id
 	 */
-	private function update_stock_status( string $stock_level, ?string $product_id ): void {
+	private function update_stock_status( string $stock_level, string $product_id ): void {
 		// WooCommerce has a separate status value for in stock / out of stock, set it
 		// according to stock level.
 		if ( $stock_level > 0 ) {
