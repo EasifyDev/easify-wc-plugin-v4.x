@@ -27,7 +27,7 @@ include_once(dirname(__FILE__) . '/class-easify-generic-shop.php');
  * required for use by the Easify_Generic_Web_Service class.
  * 
  * @class       Easify_Generic_Shop
- * @version     4.29
+ * @version     4.30
  * @package     easify-woocommerce-connector
  * @author      Easify 
  */
@@ -237,8 +237,6 @@ class Easify_WC_Shop extends Easify_Generic_Shop {
 	            $this->update_stock_status( $stock_level, $ProductId );
 
                 update_post_meta($ProductId, '_manage_stock', 'yes');
-                update_post_meta($ProductId, '_downloadable', 'no');
-                update_post_meta($ProductId, '_virtual', 'no');
                 update_post_meta($ProductId, '_visibility', 'visible');
                 update_post_meta($ProductId, '_sold_individually', '');
                 update_post_meta($ProductId, '_manage_stock', 'yes');
