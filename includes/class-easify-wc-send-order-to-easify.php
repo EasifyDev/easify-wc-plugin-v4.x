@@ -331,7 +331,7 @@ class Easify_WC_Send_Order_To_Easify {
 	 * @return int
 	 * @global database $wpdb
 	 */
-	private function get_easify_sku_by_woocommerce_product_id( $woocommerce_product_id, $variation_id ): int {
+	private function get_easify_sku_by_woocommerce_product_id( $woocommerce_product_id, $variation_id ) {
 		global $wpdb;
 
 		Easify_Logging::Log(
@@ -374,7 +374,7 @@ class Easify_WC_Send_Order_To_Easify {
 			);
 		}
 
-		return $sku;
+		return $sku ?? 0;
 	}
 
 
