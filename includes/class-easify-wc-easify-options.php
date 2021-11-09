@@ -22,18 +22,19 @@ require_once( 'easify-generic-constants.php' );
  * Provides easy access to the Easify options that are stored in WordPress
  * 
  * @class       Easify_WC_Easify_Options
- * @version     4.22
+ * @version     4.33
  * @package     easify-woocommerce-connector
  * @author      Easify 
  */
 class Easify_WC_Easify_Options {
 
-    private $order_options;
+	private $order_options;
     private $payment_options;
     private $customer_options;
     private $product_options;       
     private $shipping_options;
     private $coupon_options;
+	private $general_options;
 
     /**
      * Constructor
@@ -47,7 +48,8 @@ class Easify_WC_Easify_Options {
         $this->customer_options = get_option('easify_options_customers');
         $this->product_options = get_option('easify_options_products');        
         $this->shipping_options = get_option('easify_options_shipping');
-        $this->coupon_options = get_option('easify_options_coupons');        
+        $this->coupon_options = get_option('easify_options_coupons');
+	    $this->general_options = get_option('easify_options_general');
     }
 
      /**
@@ -446,7 +448,20 @@ class Easify_WC_Easify_Options {
         }
                
         return true;        
-    }    
+    }
+
+	/**
+	 * Gets the Website Unique Id from WordPress options
+	 *
+	 * @return string
+	 */
+	public function get_website_unique_id() {
+		if (!isset($this->general_options['website_unique_id'])) {
+			return '';
+		}
+
+		return $this->general_options['website_unique_id'];
+	}
 }
 
 ?>

@@ -29,7 +29,7 @@ require_once ( 'class-easify-generic-crypto.php' );
  * updates to the settings and validation.
  * 
  * @class       Easify_WC__Plugin_Settings_Page
- * @version     4.25
+ * @version     4.33
  * @package     easify-woocommerce-connector
  * @author      Easify 
  */
@@ -97,6 +97,7 @@ class Easify_WC__Plugin_Settings_Page {
         $this->init_shipping();
         $this->init_payment();
         $this->init_logging();
+        $this->init_general();
 
         // Add a filter so that we can encrypt the password as it is sent to the DB
         add_filter('pre_update_option_easify_password', array($this, 'easify_update_field_easify_password'), 10, 1);
@@ -170,6 +171,7 @@ class Easify_WC__Plugin_Settings_Page {
             'coupons' => 'Coupons',
             'shipping' => 'Shipping',
             'payment' => 'Payment',
+            'general' => 'General',
             'logging' => 'Logging'
         );
 
@@ -748,9 +750,63 @@ class Easify_WC__Plugin_Settings_Page {
                 'easify_options_section_products' // section
         );        
     }
-    
+
+            /**
+     * Initialise Easify General Settings
+     */
+    private function init_general() {
+
+        // register general options group
+        register_setting(
+                'easify_options_general_group', // group
+                'easify_options_general', // name
+                array($this, 'sanitise') // sanitise method
+        );
+
+        // add general page
+        add_settings_section(
+                'easify_options_section_general', // id
+                'Easify General Options', // title
+                array($this, 'settings_html_easify_general_message'), // callback
+                'easify_options_page_general' // page
+        );
+
+        add_settings_field(
+                'website_unique_id', // id
+                'Unique Website Id', // title
+                array($this, 'setting_website_unique_id'), // callback
+                'easify_options_page_general', // page
+                'easify_options_section_general' // section
+        );
+
+    }
+
+
        /**
-     * HTML to display for the Customers section
+     * HTML to display for the General section
+     */
+    public function settings_html_easify_general_message() {
+        ?>
+        <p>Here you can configure general options that relate to this website and your Easify Server.</p>
+        <p class="easify-warning"><b>NOTE:</b> The <b>Unique Website Id</b> value below must only be set if you
+        are running more than one website with Easify. If you only have a single website,
+        leave this blank!</p>
+        <?php
+    }
+
+        /**
+     * HTML to display the website_unique_id config option
+     */
+    public function setting_website_unique_id() {
+        printf('<input type="text" id="website_unique_id" name="easify_options_general[website_unique_id]" style="width: 350px;"  value="%s" />', isset($this->options['easify_options_general']['website_unique_id']) ?
+                        esc_attr($this->options['easify_options_general']['website_unique_id']) : ''
+        );
+
+        $this->tool_tip('general-website-unique-id-tip');
+    }
+
+       /**
+     * HTML to display for the Products section
      */
     public function settings_html_easify_products_message() {
         ?>
@@ -1630,6 +1686,7 @@ class Easify_WC__Plugin_Settings_Page {
         $this->options['easify_options_logging'] = get_option('easify_options_logging');
         $this->options['easify_username'] = get_option('easify_username');
         $this->options['easify_options_coupons'] = get_option('easify_options_coupons');
+        $this->options['easify_options_general'] = get_option('easify_options_general');
 
         $easifyPassword = get_option('easify_password');
         if (!empty($easifyPassword)) {
@@ -2099,7 +2156,22 @@ class Easify_WC__Plugin_Settings_Page {
                 <?= $this->tooltip_click_here_link('logging-logging') ?>                
             </div> 
 
-
+            <!-- OPTIONS GENERAL -->
+            <div id="general-website-unique-id-tip">
+                <h3>Unique Website Id</h3>
+                <p class="easify-warning"><b>NOTE:</b> Only change this setting if you are running more than one
+                website with the same Easify Server. <b>If you only have one website, leave this setting blank!</b></p>
+                <p>If you are running multiple websites with one Easify Server you will need to enter a
+                unique Id number for each additional website here.</p>
+                <p><b>For the first website leave this setting blank.</b></p>
+                <p>For each additional website, enter a unique number for each website.</p>
+                <p>The second website you connect to Easify should have a unique id of <b>2</b>.</p>
+                <p>Your third website <b>3</b>.</p>
+                <p>The fourth website <b>4</b> etc...</p>
+                <p>For example if you have a second website connected to your Easify Server, enter a value of <b>2</b>,
+                and on your first website leave this value blank.</p>
+                <?= $this->tooltip_click_here_link('general-website-unique-id-tip') ?>
+            </div>
 
         </div>
         <?php

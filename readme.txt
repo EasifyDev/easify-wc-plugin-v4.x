@@ -2,12 +2,12 @@
 Contributors: easify
 Donate link: http://www.easify.co.uk/
 Tags: easify, epos, epos software, stock control software, accounting software, invoicing software, small business software, ecommerce, e-commerce, woothemes, wordpress ecommerce, woocommerce, shopping cart
-Requires at least: 4.0
-Tested up to: 5.7
-Stable tag: 4.32
+Requires at least: 5.0
+Tested up to: 5.8
+Stable tag: 4.33
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
-WC tested up to: 5.0
+WC tested up to: 5.9
 
 Connects Easify V4.x Small Business Software to your WooCommerce online shop, 
 allowing you to synchronise stock levels between your physical shop and your
@@ -31,12 +31,12 @@ automatically synchronised with your WooCommerce online shop.
 
 = Minimum Requirements =
 
-* WordPress 4.0 or greater
-* PHP version 5.2.4 or greater
+* WordPress 5.0 or greater
+* PHP version 7.4 or greater
 * MySQL version 5.0 or greater
 * Some payment gateways require fsockopen support (for IPN access)
-* WooCommerce 2.6.2 or greater
-* Easify V4.39.1 or greater
+* WooCommerce 5 or greater
+* Easify V4.78 or greater
 * Requires open outgoing ports in the range 1234 to 1260, some hosts may block these
 * Requires open outgoing port 443, some hosts may block outgoing ports
 
@@ -100,6 +100,9 @@ support@easify.co.uk
 8. Logging, if you need it you can enable detailed logging for the Easify WooCommerce Plugin.
 
 == Changelog ==
+= 4.33 =
+* Added 'General' config tab to allow configuration of web server instance id to improve handling of records sent to
+* Easify Server when connecting multiple websites to a single Easify Server.
 = 4.32 =
 * Fixed issue where order with WooCommerce product without a SKU value not being sent
 to Easify Server.
@@ -202,6 +205,6 @@ product WooCommerce gallery (requires you to be running Easify V4.56 or later).
 * Initial release for Easify V4.x.
 
 == Upgrade Notice ==
-= 4.32 =
-* Fixed issue where order with WooCommerce product without a SKU value not being sent
-to Easify Server.
+= 4.33 =
+* Added 'General' config tab to allow configuration of web server instance id to improve handling of records sent to
+* Easify Server when connecting multiple websites to a single Easify Server.

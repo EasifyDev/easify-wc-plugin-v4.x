@@ -31,7 +31,7 @@ require_once 'class-easify-wc-coupon-splitter.php';
  * be queued for delivery to the relevant Easify Server.
  *
  * @class       Easify_WC_Send_Order_To_Easify
- * @version     4.26
+ * @version     4.33
  * @package     easify-woocommerce-connector
  * @author      Easify
  */
@@ -122,7 +122,7 @@ class Easify_WC_Send_Order_To_Easify {
 	private function do_order() {
 		// Populate Easify Order model with order information.
 		$this->easify_order_model->ExtOrderNo    = $this->woocommerce_order->order_no;
-		$this->easify_order_model->ExtCustomerId = $this->woocommerce_order->customer_id;
+		$this->easify_order_model->ExtCustomerId = $this->woocommerce_order->customer_id; //TODO: Fixup id
 		$this->easify_order_model->DatePlaced    = $this->get_formatted_date();
 		$this->easify_order_model->StatusId      = $this->easify_options->get_easify_order_status_id();
 
@@ -197,7 +197,7 @@ class Easify_WC_Send_Order_To_Easify {
 	 */
 	private function do_customer() {
 		// Populate customer in Easify Model with customer details from WooCommerce order.
-		$this->easify_order_model->Customer->ExtCustomerId       = $this->woocommerce_order->customer_id;
+		$this->easify_order_model->Customer->ExtCustomerId       = $this->fixup_customer_id_for_easify();
 		$this->easify_order_model->Customer->CompanyName         = $this->woocommerce_order->order_post_meta['_billing_company'][0];
 		$this->easify_order_model->Customer->Title               = '';
 		$this->easify_order_model->Customer->FirstName           = $this->woocommerce_order->order_post_meta['_billing_first_name'][0];
@@ -235,6 +235,49 @@ class Easify_WC_Send_Order_To_Easify {
 		$this->easify_order_model->Customer->TradeAccount   = null; // Set to null - don't want to overwrite an existing trade status.
 		$this->easify_order_model->Customer->CreditLimit    = null; // Set to null - don't want to overwrite an existing credit limit.
 		$this->easify_order_model->Customer->PaymentTermsId = null;  // Set to null - don't want to overwrite an existing payment terms setting.
+	}
+
+	/**
+	 * Users that have more than one website feeding into an Easify Server will
+	 * need to enter a unique website id into the Easify Plugin General tab. This value
+	 * gets prepended to the woocommerce customer id and is used as the Easify external
+	 * customer id. This ensures that the customer id is unique between all websites
+	 * and you don't get the scenario where customer 123 on website A gets confused
+	 * with customer 123 on website B.
+	 *
+	 * The WooCommerce customer id gets padded to 8 characters long with zeroes and the
+	 * unique id is prepended to that. That converts the WooCommerce customer id into a
+	 * 9 digit number with the website unique id at the start.
+	 *
+	 * The user should not enter a value for the first web server, if they do enter a
+	 * value of 1 by mistake, we detect this and ignore it returning the original
+	 * WooCommerce customer id.
+	 */
+	private function fixup_customer_id_for_easify()
+	{
+		$website_unique_id = $this->easify_options->get_website_unique_id();
+
+		if (!empty($website_unique_id))
+		{
+			if ($website_unique_id == 1)
+			{
+				// Do not modify the id if the unique id is 1.
+				Easify_Logging::Log( 'Easify_WC_Send_Order_To_Easify.fixup_customer_id_for_easify() $website_unique_id IS set to 1, not modifying customer id. ' .
+				                     'Using ExtCustomerId: ' . $this->woocommerce_order->customer_id);
+				return $this->woocommerce_order->customer_id;
+			}
+
+			$ext_customer_id = $website_unique_id . str_pad($this->woocommerce_order->customer_id,8,'0',STR_PAD_LEFT);
+
+			Easify_Logging::Log( 'Easify_WC_Send_Order_To_Easify.fixup_customer_id_for_easify() $website_unique_id IS set. ' .
+			'Using ExtCustomerId: ' . $ext_customer_id);
+
+			return $ext_customer_id;
+		}else{
+			Easify_Logging::Log( 'Easify_WC_Send_Order_To_Easify.fixup_customer_id_for_easify() $website_unique_id NOT set. ' .
+			                     'Using ExtCustomerId: ' .  $this->woocommerce_order->customer_id);
+			return $this->woocommerce_order->customer_id;
+		}
 	}
 
 	/**
