@@ -29,7 +29,7 @@ require_once ( 'class-easify-generic-crypto.php' );
  * updates to the settings and validation.
  * 
  * @class       Easify_WC__Plugin_Settings_Page
- * @version     4.33
+ * @version     4.34
  * @package     easify-woocommerce-connector
  * @author      Easify 
  */
@@ -1910,6 +1910,8 @@ class Easify_WC__Plugin_Settings_Page {
                 are published from Easify will be uploaded to WooCommerce, but from that point onwards only 
                 product price and stock level changes will be uploaded to WooCommerce. Editing the product image, 
                 tags, description etc... will not modify the product in WooCommerce.</p>
+                <p><strong>Note:</strong> You can disable uploading of product stock levels by un-ticking the <b>Enable
+                 stock control for this product</b> checkbox on the <b>Stock Levels</b> tab of the product in Easify Pro.</p>
                 <p><strong>Note:</strong> You can also prevent product price and stock level changes from being uploaded using 
                 the options above.</p>
                 <?= $this->tooltip_click_here_link('ignore-product-updates') ?>                

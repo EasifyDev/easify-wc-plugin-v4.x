@@ -27,7 +27,7 @@ include_once(dirname(__FILE__) . '/class-easify-generic-shop.php');
  * required for use by the Easify_Generic_Web_Service class.
  * 
  * @class       Easify_Generic_Shop
- * @version     4.31
+ * @version     4.34
  * @package     easify-woocommerce-connector
  * @author      Easify 
  */
@@ -226,11 +226,17 @@ class Easify_WC_Shop extends Easify_Generic_Shop {
                        
             // STOCK LEVELS          
             $updateStockLevels = !$this->easify_options->get_easify_dont_update_product_stock_levels();
-            
-            if ($updateStockLevels)
-            {            
-                Easify_Logging::Log("Easify_WC_Shop.UpdateProduct() - Updating of stock levels enabled.");
-                
+
+			$productStockControlEnabledInEasify = $Product->Allocatable;
+
+	        if (!$productStockControlEnabledInEasify) {
+		        Easify_Logging::Log('Easify_WC_Shop.UpdateProduct() - Stock control not enabled in Easify, ignoring stock level update.');
+	        }
+
+            if ($updateStockLevels && $productStockControlEnabledInEasify)
+            {
+	            Easify_Logging::Log("Easify_WC_Shop.UpdateProduct() - Updating of stock levels enabled.");
+
                 // handling stock - we get free stock minus allocated stock
 	            $stock_level = $Product->StockLevel - $this->easify_server->get_allocation_count_by_easify_sku($Product->SKU);
 
@@ -419,7 +425,12 @@ class Easify_WC_Shop extends Easify_Generic_Shop {
             }
  
             $Product = $this->easify_server->GetProductFromEasify($EasifySku);
-            
+
+	        if ($Product->Allocatable == FALSE) {
+		        Easify_Logging::Log('Easify_WC_Shop.UpdateProductStockLevel() - Stock control not enabled in Easify, ignoring update.');
+		        return;
+	        }
+
             if ($Product->Published == FALSE) {
                 Easify_Logging::Log('Easify_WC_Shop.UpdateProductStockLevel() - Not published, ignoring update.');
                 return;

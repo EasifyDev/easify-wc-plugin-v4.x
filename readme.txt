@@ -4,7 +4,7 @@ Donate link: http://www.easify.co.uk/
 Tags: easify, epos, epos software, stock control software, accounting software, invoicing software, small business software, ecommerce, e-commerce, woothemes, wordpress ecommerce, woocommerce, shopping cart
 Requires at least: 5.0
 Tested up to: 5.8
-Stable tag: 4.33
+Stable tag: 4.34
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 WC tested up to: 5.9
@@ -100,6 +100,9 @@ support@easify.co.uk
 8. Logging, if you need it you can enable detailed logging for the Easify WooCommerce Plugin.
 
 == Changelog ==
+= 4.34 =
+* Resolved issue where disabling stock control for a product in Easify still caused stock levels to be uploaded to
+* website when product modified in Easify.
 = 4.33 =
 * Added 'General' config tab to allow configuration of web server instance id to improve handling of records sent to
 * Easify Server when connecting multiple websites to a single Easify Server.
@@ -205,6 +208,6 @@ product WooCommerce gallery (requires you to be running Easify V4.56 or later).
 * Initial release for Easify V4.x.
 
 == Upgrade Notice ==
-= 4.33 =
-* Added 'General' config tab to allow configuration of web server instance id to improve handling of records sent to
-* Easify Server when connecting multiple websites to a single Easify Server.
+= 4.34 =
+* Resolved issue where disabling stock control for a product in Easify still caused stock levels to be uploaded to
+* website when product modified in Easify.
