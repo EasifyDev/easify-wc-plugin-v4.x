@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (C) 2017  Easify Ltd (email:support@easify.co.uk)
+ * Copyright (C) 2023  Easify Ltd (email:support@easify.co.uk)
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -27,7 +27,7 @@
  * Easify Server.
  * 
  * @class       Easify_Generic_Easify_Server
- * @version     4.10
+ * @version     4.35
  * @package     easify-woocommerce-connector
  * @author      Easify 
  */
@@ -199,6 +199,11 @@ class Easify_Generic_Easify_Server {
         $info = curl_getinfo($ch);
 
         if ($info['http_code'] != '200') {
+	        if (curl_error($ch)) {
+		        $result = 'curl_error:' . curl_error($ch);
+		        Easify_Logging::Log($result);
+	        }
+
             Easify_Logging::Log('Could not communicate with Easify Server -  http response code: ' . $info['http_code']);
             throw new Exception('Could not communicate with Easify Server -  http response code: ' . $info['http_code']);
         }

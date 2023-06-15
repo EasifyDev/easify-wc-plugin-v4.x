@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 2019  Easify Ltd (email:support@easify.co.uk)
+ * Copyright (C) 2023  Easify Ltd (email:support@easify.co.uk)
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -29,7 +29,7 @@ require_once ( 'class-easify-generic-crypto.php' );
  * updates to the settings and validation.
  * 
  * @class       Easify_WC__Plugin_Settings_Page
- * @version     4.34
+ * @version     4.35
  * @package     easify-woocommerce-connector
  * @author      Easify 
  */
@@ -231,9 +231,9 @@ class Easify_WC__Plugin_Settings_Page {
                     }
                 }
             }
-
-            // close wrapper
-            echo '</h2></div>';
+            ?>
+            </h2>
+	    <?php
         }
 
         private function display_shipping_options_warning() {
@@ -316,7 +316,7 @@ class Easify_WC__Plugin_Settings_Page {
                 if (!$this->isWooCommercePluginActive) {
                     // If WooCommerce not active then warn user...      
                     ?>            
-                    <h3 class="nav-tab-wrapper easify-warning">WooCommerce Plugin is not installed, or has not been activated.</h2>
+                    <h3 class="nav-tab-wrapper easify-warning">WooCommerce Plugin is not installed, or has not been activated.</h3>
                         <div>
                             <p>You will need to make sure the WooCommerce plugin has been installed 
                                 and activated before you can configure Easify settings.</p>
@@ -330,7 +330,7 @@ class Easify_WC__Plugin_Settings_Page {
             if (!$this->arePermalinksEnabled) {
                 // Permalinks not enabled...      
                 ?>            
-                <h3 class="nav-tab-wrapper easify-warning">Permalinks NOT enabled...</h2>
+                <h3 class="nav-tab-wrapper easify-warning">Permalinks NOT enabled...</h3>
             <div>
                 <p>The Easify WooCommerce plugin requires that Permalinks be enabled in WordPress settings.</p>
                 <p>Make sure Permalinks are set to anything other than <b>Plain</b>.</p>
@@ -1146,7 +1146,7 @@ class Easify_WC__Plugin_Settings_Page {
             if (!is_numeric($value)) {
                 // Easify SKU must be a number, if not a number warn user and don't save value in database
                 $type = 'error';
-                $message = __($mapping_name . ' Easify SKU ' . $value . ' is not a valid number.', 'require-featured-image');
+                $message = __(' Easify SKU ' . $value . ' is not a valid number.', 'require-featured-image');
                 add_settings_error(
                         'easify_discount_sku', esc_attr('settings_updated'), $message, $type
                 );
@@ -1175,12 +1175,12 @@ class Easify_WC__Plugin_Settings_Page {
                 {
                     // Warn user...
                     $type = 'error';
-                    $message = __($mapping_name . ' Easify SKU ' . $value . ' was not found in Easify Server. Make sure a product with this SKU exists in Easify.', 'require-featured-image');
+                    $message = __(' Easify SKU ' . $value . ' was not found in Easify Server. Make sure a product with this SKU exists in Easify.', 'require-featured-image');
                     add_settings_error(
                             'easify_discount_sku', esc_attr('settings_updated'), $message, $type
                     );
 
-                    $input['easify_discount_sku'][$mapping_name] = '';  
+	                $input['easify_discount_sku'] = '';
                     
                     return $input;
                 }
@@ -1194,12 +1194,12 @@ class Easify_WC__Plugin_Settings_Page {
             // If SKU not found in Easify Server, warn the user and don't save the value to the database
             if (empty($product->SKU)) {
                 $type = 'error';
-                $message = __($mapping_name . ' Easify SKU ' . $value . ' was not found in Easify Server. Make sure a product with this SKU exists in Easify.', 'require-featured-image');
+                $message = __(' Easify SKU ' . $value . ' was not found in Easify Server. Make sure a product with this SKU exists in Easify.', 'require-featured-image');
                 add_settings_error(
                         'easify_discount_sku', esc_attr('settings_updated'), $message, $type
                 );
 
-                $input['easify_discount_sku'][$mapping_name] = '';
+	            $input['easify_discount_sku'] = '';
             }
         }
 
@@ -1273,6 +1273,17 @@ class Easify_WC__Plugin_Settings_Page {
                         $this->setting_html_easify_shipping_sku('local_delivery');
                         $this->tool_tip('shipping-local-delivery-tip');
                         ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Local Pickup
+                    </td>
+                    <td>
+		                <?php
+		                $this->setting_html_easify_shipping_sku('local_pickup');
+		                $this->tool_tip('shipping-local-pickup-tip');
+		                ?>
                     </td>
                 </tr>
                 <tr>
@@ -1983,7 +1994,21 @@ class Easify_WC__Plugin_Settings_Page {
                     you can create one product in Easify for all of your WooCommerce shipping methods and use the same 
                     Easify SKU in each box here.</p>   
                 <?= $this->tooltip_click_here_link('shipping-local') ?>                 
-            </div>             
+            </div>
+
+            <div id="shipping-local-pickup-tip">
+                <h3>Local Pickup Mapping</h3>
+                <p>When an order is placed via WooCommerce, it will be sent to your Easify Server and if the WooCommerce order
+                    has a shipping method of <b>Local Pickup</b>, the Easify SKU you specify here will be added to the order in Easify.</p>
+                <p>If you want to support Local Pickup in Easify, create a new product in Easify named "Local Pickup" and
+                    enter the Easify SKU of that product here.</p>
+                <p>When the <b>Local Pickup</b> Shipping item is added to the order in Easify, its value will be set to the shipping cost that
+                    was calculated by WooCommerce.</p>
+                <p><b>Note: </b>You don't have to create a separate Easify Product for each shipping method. If you prefer
+                    you can create one product in Easify for all of your WooCommerce shipping methods and use the same
+                    Easify SKU in each box here.</p>
+		        <?= $this->tooltip_click_here_link('shipping-local-pickup') ?>
+            </div>
 
             <div id="shipping-default-tip">
                 <h3>Default Delivery Mapping</h3>
