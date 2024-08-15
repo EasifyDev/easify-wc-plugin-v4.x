@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (C) 2020  Easify Ltd (email:support@easify.co.uk)
+ * Copyright (C) 2024  Easify Ltd (email:support@easify.co.uk)
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -27,7 +27,7 @@ include_once(dirname(__FILE__) . '/class-easify-generic-shop.php');
  * required for use by the Easify_Generic_Web_Service class.
  * 
  * @class       Easify_Generic_Shop
- * @version     4.34
+ * @version     4.36
  * @package     easify-woocommerce-connector
  * @author      Easify 
  */
@@ -532,6 +532,8 @@ class Easify_WC_Shop extends Easify_Generic_Shop {
 
             // calculate price from retail margin and cost price
             $Price = round(($Product->CostPrice / (100 - $Product->RetailMargin) * 100), 4);
+
+	        Easify_Logging::Log("Easify_WC_Shop.UpdateProduct() - Calculated price: " . $Price);
 
             // catch reserved delivery SKUs and update delivery prices
             if ($this->UpdateDeliveryPrice($Product->SKU, $Price))
@@ -1099,11 +1101,13 @@ class Easify_WC_Shop extends Easify_Generic_Shop {
         
         // Determine which version of Easify Server we're talking to and use 
         // relevant code to get product info...
+        $serverMajorVersion = $this->easify_server->GetEasifyServerMajorVersion();
         $serverMinorVersion = $this->easify_server->GetEasifyServerMinorVersion();
         
+        Easify_Logging::Log("Easify_WC_Shop.UpdateProductInformation() - Server major version:" . $serverMajorVersion);
         Easify_Logging::Log("Easify_WC_Shop.UpdateProductInformation() - Server minor version:" . $serverMinorVersion);
         
-        if ($serverMinorVersion < 56)
+        if ($serverMajorVersion == 4 && $serverMinorVersion < 56)
         {
             Easify_Logging::Log("Easify_WC_Shop.UpdateProductInformation() - Using legacy product info code.");
                     
@@ -1131,7 +1135,15 @@ class Easify_WC_Shop extends Easify_Generic_Shop {
             Easify_Logging::Log("Easify_WC_Shop.UpdateProductInformation() - Product info id: " . $ProductInfo['Id'] );
             
             // Get product images... 
+            if ($serverMajorVersion < 5){
+                Easify_Logging::Log("Easify_WC_Shop.UpdateProductInformation() - Version " . $serverMajorVersion . " getting images V4 style.");
             $images = $this->easify_server->GetProductInfoImages($ProductInfo['Id']);
+            } else{
+                Easify_Logging::Log("Easify_WC_Shop.UpdateProductInformation() - Version " . $serverMajorVersion . " getting images V5 style.");
+                $images = $this->easify_server->GetProductInfoImagesV5($ProductInfo['Id']);
+            }
+
+            Easify_Logging::Log("Easify_WC_Shop.UpdateProductInformation() - Got images.");
             
             // Save images...            
             $this->SaveProductImagesToWooCommerce($ProductSku, $images);         
@@ -1225,8 +1237,11 @@ class Easify_WC_Shop extends Easify_Generic_Shop {
             // Link product record and product image thumbnail (we use the first image)
             update_post_meta($ProductId, '_thumbnail_id', $imageIds[0]); 
 
+            // Remove the first image from the gallery array
+            $galleryImages = array_slice($imageIds, 1);
+
             // Create comma separated list of gallery images...
-            $galleryImageList = implode(',', $imageIds);
+            $galleryImageList = implode(',', $galleryImages);
 
             Easify_Logging::Log("Easify_WC_Shop.SaveProductImagesToWooCommerce() - Gallery Images:" . $galleryImageList);          
 

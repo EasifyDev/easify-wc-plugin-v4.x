@@ -3,19 +3,19 @@ Contributors: easify
 Donate link: http://www.easify.co.uk/
 Tags: easify, epos, epos software, stock control software, accounting software, invoicing software, small business software, ecommerce, e-commerce, woothemes, wordpress ecommerce, woocommerce, shopping cart
 Requires at least: 5.0
-Tested up to: 6.2.2
-Stable tag: 4.35
+Tested up to: 6.6.1
+Stable tag: 4.36
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
-WC tested up to: 7.8
+WC tested up to: 9.0
 
-Connects Easify V4.x Small Business Software to your WooCommerce online shop, 
+Connects Easify Business Software to your WooCommerce online shop,
 allowing you to synchronise stock levels between your physical shop and your
 online shop.
 
 == Description ==
  
-This plugin connects your Easify V4.x Small Business software with your 
+This plugin connects your Easify Business software with your
 WooCommerce online shop.
 
 Orders that are placed via your WooCommerce enabled website will be 
@@ -62,31 +62,30 @@ with Microsoft Windows.
 It provides you with stock control, invoicing, quoting, purchasing, 
 EPOS software, accounting, reporting and more...
 
-= What does the Easify V4.x WooCommerce Connector do? =
+= What does the Easify WooCommerce Connector do? =
 
-This plugin connects your Easify V4.x Small Business Software with your 
+This plugin connects your Easify Business Software with your
 WooCommerce online shop.
 
-Easify V4.x gives you EPOS, Stock Control, Billing, Purchasing and Accounting 
+Easify gives you EPOS, Stock Control, Billing, Purchasing and Accounting
 all in one easy to use package.
 
 With this plugin and WooCommerce, Orders that are placed via your WooCommerce 
 enabled website will be automatically sent to your Easify Server.
 
-Products that you add to your Easify Server using Easify Pro V4.x will be 
+Products that you add to your Easify Server using Easify Pro will be
 automatically uploaded to your WooCommerce enabled website.
 
 As you sell products in your traditional shop, your stock levels will be 
 automatically synchronised with your WooCommerce online shop.
 
-= Where do I get Easify V4.x Software? =
-You can purchase Easify from our website - <http://www.easify.co.uk>
+= Where do I get Easify Software? =
+You can purchase Easify from our website - <https://www.easify.co.uk>
 
 = Where do I get support? =
 
-<http://www.easify.co.uk/support/contact>
 support@easify.co.uk
-+44 (0)1223 750350
+
 
 == Screenshots ==
 
@@ -100,6 +99,9 @@ support@easify.co.uk
 8. Logging, if you need it you can enable detailed logging for the Easify WooCommerce Plugin.
 
 == Changelog ==
+= 4.36 =
+* Support for Easify Version 5.
+* Fixed issue where main product image would appear twice if multiple images present.
 = 4.35 =
 * Added support for WooCommerce Local Pickup delivery option.
 * Improved logging to assist with troubleshooting Easify Server connection problems.
@@ -212,7 +214,6 @@ product WooCommerce gallery (requires you to be running Easify V4.56 or later).
 * Initial release for Easify V4.x.
 
 == Upgrade Notice ==
-= 4.35 =
-* Added support for WooCommerce Local Pickup delivery option.
-* Improved logging to assist with troubleshooting Easify Server connection problems.
-* Tested compatibility with PHP 8.x
+= 4.36 =
+* Support for Easify Version 5.
+* Fixed issue where main product image would appear twice if multiple images present.

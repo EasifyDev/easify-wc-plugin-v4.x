@@ -1,7 +1,9 @@
 <?php
 
+require_once('class-easify-compression.php');
+
 /**
- * Copyright (C) 2023  Easify Ltd (email:support@easify.co.uk)
+ * Copyright (C) 2024  Easify Ltd (email:support@easify.co.uk)
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -27,7 +29,7 @@
  * Easify Server.
  * 
  * @class       Easify_Generic_Easify_Server
- * @version     4.35
+ * @version     4.36
  * @package     easify-woocommerce-connector
  * @author      Easify 
  */
@@ -204,8 +206,8 @@ class Easify_Generic_Easify_Server {
 		        Easify_Logging::Log($result);
 	        }
 
-            Easify_Logging::Log('Could not communicate with Easify Server -  http response code: ' . $info['http_code']);
-            throw new Exception('Could not communicate with Easify Server -  http response code: ' . $info['http_code']);
+            Easify_Logging::Log('Could not communicate with Easify Server -  http response code: ' . $info['http_code'] . ' $url: ' . $url);
+            throw new Exception('Could not communicate with Easify Server -  http response code: ' . $info['http_code'] . ' $url: ' . $url);
         }
 
         // record any errors
@@ -220,7 +222,26 @@ class Easify_Generic_Easify_Server {
         return $result;
     }
 
-    private function GetJsonFromEasifyServer($entity, $key) {
+    private function GetJsonFromEasify(){
+        Easify_Logging::Log("Easify_Generic_Easify_Server.GetJsonFromEasify()");
+
+        $args = func_get_args();
+        $numArgs = func_num_args();
+
+        Easify_Logging::Log("Easify_Generic_Easify_Server.GetJsonFromEasify() - Num Args: " . $numArgs);
+
+        if ($numArgs == 2) {
+            return $this->GetJsonFromEasifyServer($args[0], $args[1]);
+        } elseif ($numArgs == 4) {
+            return $this->GetJsonFromEasifyServerThreeParms($args[0], $args[1], $args[2], $args[3]);
+        } else {
+            Easify_Logging::Log("Easify_Generic_Easify_Server.GetJsonFromEasify() - ERROR: Invalid arguments");
+            throw new InvalidArgumentException("Invalid arguments");
+        }
+    }
+
+    private function GetJsonFromEasifyServer($entity, $key)
+    {
         Easify_Logging::Log("Easify_Generic_Easify_Server.GetJsonFromEasifyServer() - Entity: " . $entity . " Key: " . $key);
 
         if (empty($this->server_url))
@@ -362,15 +383,25 @@ class Easify_Generic_Easify_Server {
         // if you want the images to be sent to you at the specified width or height.
         $xpath = $this->GetFromEasify('Products_GetImages?productInfoId=' . $ProductInfoId . '&width=0&height=0', null);
         
+        Easify_Logging::Log('Easify_Generic_Easify_Server->GetProductInfoImages() - Getting $serialisedXml.');
+
         $serialisedXml = $xpath->query('/d:Products_GetImages')->item(0)->nodeValue;
                 
+        Easify_Logging::Log('Easify_Generic_Easify_Server->GetProductInfoImages() - Got $serialisedXml: ' . $serialisedXml);
+
         // The string comes back as UTF-16, change it to UTF-8.
         $xmlString = str_replace("utf-16", "utf-8", $serialisedXml);
         
         //Easify_Logging::Log('Easify_Generic_Easify_Server->GetProductInfoImages() - Products_GetImages:' . $serialisedString); 
                      
+        $decodedXmlString = base64_decode($xmlString);
+
+        Easify_Logging::Log('Easify_Generic_Easify_Server->GetProductInfoImages() - $decodedXmlString: ' . $decodedXmlString);
+
         $xml = new SimpleXMLElement($xmlString);
       
+        Easify_Logging::Log('Easify_Generic_Easify_Server->GetProductInfoImages() - $xml: ' . $xml);
+
         $imageList = array();        
         foreach($xml as $rawImage) {
             Easify_Logging::Log('Easify_Generic_Easify_Server->GetProductInfoImages() - Processing image: ' . $rawImage->Name);               
@@ -381,7 +412,44 @@ class Easify_Generic_Easify_Server {
         return $imageList;
     }
 
-    public function GetEasifyOrderStatuses() {
+    /**
+     * This function gets the product images for the specified product id from an easify Server using the
+     * new V5 technique which is to get a compressed escaped json string as opposed to V4 which used uncompressed XML.
+     */
+    public function GetProductInfoImagesV5($ProductInfoId)
+    {
+        Easify_Logging::Log('Easify_Generic_Easify_Server->GetProductInfoImagesV5() - $ProductInfoId:' . $ProductInfoId);
+
+        // The product images in Easify V4.56 and later must be retrieved via a Webget method
+        // because the images may be stored on the Easify Server local disk instead of in the
+        // ProductInfoImages database table. Always use the Products_GetImages method to retrieve images.
+        // Speficy width and height as zero to get images at full size. You can specify the width or height
+        // if you want the images to be sent to you at the specified width or height.
+
+        Easify_Logging::Log('Easify_Generic_Easify_Server->GetProductInfoImagesV5() - Getting $compressedJson');
+
+        $url = $this->server_url . "/Products_GetImages?productInfoId=" . $ProductInfoId . '&width=0&height=0';
+
+        $jsonResponse = $this->GetFromEasifyServer($url);
+
+        $data = json_decode($jsonResponse, true);
+
+        $compressedJson = $data['value'];
+
+        $decompressedJson = decompressString($compressedJson);
+
+        $imageList = array();
+        foreach ($decompressedJson as $rawImage) {
+            Easify_Logging::Log('Easify_Generic_Easify_Server->GetProductInfoImagesV5() - Processing image: ' . $rawImage["Name"]);
+            array_push($imageList, $rawImage["Bytes"]);
+        }
+
+        Easify_Logging::Log('Easify_Generic_Easify_Server->GetProductInfoImagesV5() - Returning ' . count($imageList) . ' images.');
+        return $imageList;
+    }
+
+
+public function GetEasifyOrderStatuses(){
         $xpath = $this->GetFromEasify('OrderStatuses', null);
 
         $OrderStatusIds = $xpath->query('/a:feed/a:entry/a:content/m:properties/d:OrderStatusId');
