@@ -1,12 +1,12 @@
 === Easify Server WooCommerce ===
 Contributors: easify
-Donate link: http://www.easify.co.uk/
+Donate link: https://www.easify.co.uk/
 Tags: easify, epos, epos software, stock control software, accounting software, invoicing software, small business software, ecommerce, e-commerce, woothemes, wordpress ecommerce, woocommerce, shopping cart
 Requires at least: 5.0
-Tested up to: 6.6.1
-Stable tag: 4.36
+Tested up to: 6.6.2
+Stable tag: 4.38
 License: GPLv2
-License URI: http://www.gnu.org/licenses/gpl-2.0.html
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
 WC tested up to: 9.0
 
 Connects Easify Business Software to your WooCommerce online shop,
@@ -99,6 +99,10 @@ support@easify.co.uk
 8. Logging, if you need it you can enable detailed logging for the Easify WooCommerce Plugin.
 
 == Changelog ==
+= 4.38 =
+* Tested up to WordPress 6.6.2.
+= 4.37 =
+* Fixed issue with plugin not updating.
 = 4.36 =
 * Support for Easify Version 5.
 * Fixed issue where main product image would appear twice if multiple images present.
@@ -214,6 +218,5 @@ product WooCommerce gallery (requires you to be running Easify V4.56 or later).
 * Initial release for Easify V4.x.
 
 == Upgrade Notice ==
-= 4.36 =
-* Support for Easify Version 5.
-* Fixed issue where main product image would appear twice if multiple images present.
+= 4.38 =
+* Tested up to WordPress 6.6.2.
