@@ -3,7 +3,7 @@
 require_once('class-easify-compression.php');
 
 /**
- * Copyright (C) 2024  Easify Ltd (email:support@easify.co.uk)
+ * Copyright (C) 2025  Cambridge Software Development Ltd (t/a Easify) (email:support@easify.co.uk)
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -29,7 +29,7 @@ require_once('class-easify-compression.php');
  * Easify Server.
  * 
  * @class       Easify_Generic_Easify_Server
- * @version     4.36
+ * @version     4.39
  * @package     easify-woocommerce-connector
  * @author      Easify 
  */
@@ -245,7 +245,10 @@ class Easify_Generic_Easify_Server {
         Easify_Logging::Log("Easify_Generic_Easify_Server.GetJsonFromEasifyServer() - Entity: " . $entity . " Key: " . $key);
 
         if (empty($this->server_url))
-            return;
+        {
+	        Easify_Logging::Log("Easify_Generic_Easify_Server.GetJsonFromEasifyServer() - this->server_url is empty, check subscription for username exists!");
+	        return;
+        }
 
         if ($key == null) {
             $url = $this->server_url . "/" . $entity;

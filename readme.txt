@@ -3,11 +3,11 @@ Contributors: easify
 Donate link: https://www.easify.co.uk/
 Tags: easify, epos, epos software, stock control software, accounting software, invoicing software, small business software, ecommerce, e-commerce, woothemes, wordpress ecommerce, woocommerce, shopping cart
 Requires at least: 5.0
-Tested up to: 6.6.2
-Stable tag: 4.38
+Tested up to: 6.7.2
+Stable tag: 4.39
 License: GPLv2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
-WC tested up to: 9.0
+WC tested up to: 9.7
 
 Connects Easify Business Software to your WooCommerce online shop,
 allowing you to synchronise stock levels between your physical shop and your
@@ -99,6 +99,8 @@ support@easify.co.uk
 8. Logging, if you need it you can enable detailed logging for the Easify WooCommerce Plugin.
 
 == Changelog ==
+= 4.39 =
+* Fixed issue when guest customers checkout on a second site with a Unique Id set.
 = 4.38 =
 * Tested up to WordPress 6.6.2.
 = 4.37 =
@@ -218,5 +220,5 @@ product WooCommerce gallery (requires you to be running Easify V4.56 or later).
 * Initial release for Easify V4.x.
 
 == Upgrade Notice ==
-= 4.38 =
-* Tested up to WordPress 6.6.2.
+= 4.39 =
+* Fixed issue when guest customers checkout on a second site with a Unique Id set.

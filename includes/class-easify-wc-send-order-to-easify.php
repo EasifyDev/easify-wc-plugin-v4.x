@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 2020  Easify Ltd (email:support@easify.co.uk)
+ * Copyright (C) 2025  Cambridge Software Development Ltd (t/a Easify) (email:support@easify.co.uk)
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -31,7 +31,7 @@ require_once 'class-easify-wc-coupon-splitter.php';
  * be queued for delivery to the relevant Easify Server.
  *
  * @class       Easify_WC_Send_Order_To_Easify
- * @version     4.33
+ * @version     4.39
  * @package     easify-woocommerce-connector
  * @author      Easify
  */
@@ -252,9 +252,18 @@ class Easify_WC_Send_Order_To_Easify {
 	 * The user should not enter a value for the first web server, if they do enter a
 	 * value of 1 by mistake, we detect this and ignore it returning the original
 	 * WooCommerce customer id.
+	 *
+	 * NOTE: We always return zero if the customer_id is zero because this means the
+	 * customer is using a guest account and will have a new customer record in Easify
+	 * and won't be matched up with an existing record.
 	 */
 	private function fixup_customer_id_for_easify()
 	{
+		if ($this->woocommerce_order->customer_id == 0){
+			Easify_Logging::Log( 'Easify_WC_Send_Order_To_Easify.fixup_customer_id_for_easify() Customer is guest so no customer id.');
+			return 0;
+		}
+
 		$website_unique_id = $this->easify_options->get_website_unique_id();
 
 		if (!empty($website_unique_id))

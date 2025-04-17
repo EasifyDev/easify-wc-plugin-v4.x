@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 2023  Easify Ltd (email:support@easify.co.uk)
+ * Copyright (C) 2025  Cambridge Software Development Ltd (t/a Easify) (email:support@easify.co.uk)
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -29,7 +29,7 @@ require_once ( 'class-easify-generic-crypto.php' );
  * updates to the settings and validation.
  * 
  * @class       Easify_WC__Plugin_Settings_Page
- * @version     4.35
+ * @version     4.39
  * @package     easify-woocommerce-connector
  * @author      Easify 
  */
@@ -497,6 +497,8 @@ class Easify_WC__Plugin_Settings_Page {
                 </table>
                 <?php
             } else {
+	            Easify_Logging::Log("class-easify-wc-plugin-settings-page->settings_html_easify_setup_message() - Connection Failure");
+
                 $blurb = "Connection Failure";
                 ?>
                 <table class="easify_server_status">
