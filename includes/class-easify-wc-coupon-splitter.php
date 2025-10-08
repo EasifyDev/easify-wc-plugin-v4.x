@@ -34,8 +34,10 @@
  * Currently we only support single coupons per order as this is the most likely
  * use-case for WooCommerce orders...
  *
- * @Category class
- * @class Easify_WC_Coupon_Splitter
+ * @Category    class
+ * @class       Easify_WC_Coupon_Splitter
+ * @package     easify-woocommerce-connector
+ * @author      Richard Moore
  */
 class Easify_WC_Coupon_Splitter {
 	/**

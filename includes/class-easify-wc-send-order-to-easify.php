@@ -33,7 +33,7 @@ require_once 'class-easify-wc-coupon-splitter.php';
  * @class       Easify_WC_Send_Order_To_Easify
  * @version     4.39
  * @package     easify-woocommerce-connector
- * @author      Easify
+ * @author      Richard Moore
  */
 class Easify_WC_Send_Order_To_Easify {
 

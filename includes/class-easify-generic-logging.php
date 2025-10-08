@@ -25,7 +25,7 @@
  * @class       Easify_Logging
  * @version     4.26
  * @package     easify-woocommerce-connector
- * @author      Easify
+ * @author      Richard Moore
  */
 class Easify_Logging {
 

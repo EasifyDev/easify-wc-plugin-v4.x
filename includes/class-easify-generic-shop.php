@@ -29,7 +29,7 @@ require_once( 'class-easify-generic-easify-server.php' );
  * @class       Easify_Generic_Shop
  * @version     4.0
  * @package     easify-woocommerce-connector
- * @author      Easify  
+ * @author      Richard Moore
  */
 abstract class Easify_Generic_Shop {
     // $easify_server provides access to the Easify Server so that the derived 

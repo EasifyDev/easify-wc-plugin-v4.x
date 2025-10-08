@@ -28,7 +28,7 @@ require_once( 'class-easify-generic-logging.php' );
  * @class       Easify_Generic_Easify_Cloud_Api
  * @version     4.0
  * @package     easify-woocommerce-connector
- * @author      Easify
+ * @author      Richard Moore
  */
 class Easify_Generic_Easify_Cloud_Api {
 

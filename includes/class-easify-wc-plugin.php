@@ -45,7 +45,7 @@ require_once( plugin_dir_path(__FILE__) . 'class-easify-generic-crypto.php' );
  * @class       Easify_WC_Plugin
  * @version     4.6
  * @package     easify-woocommerce-connector
- * @author      Easify 
+ * @author      Richard Moore
  */
 class Easify_WC_Plugin {
     private $easify_crypto;

@@ -36,7 +36,7 @@
  * @class       Easify_Generic_Easify_Order_Model
  * @version     4.26
  * @package     easify-woocommerce-connector
- * @author      Easify
+ * @author      Richard Moore
  */
 class Easify_Generic_Easify_Order_Model{
 	// Composed classes.
