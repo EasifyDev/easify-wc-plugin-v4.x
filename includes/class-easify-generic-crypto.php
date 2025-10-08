@@ -17,6 +17,17 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+/**
+ * This class ensures that HTTP Basic Authentication is enabled for use, and
+ * provides easy access to the basic authentication username and password.
+ *
+ *
+ * @class       Easify_Generic_Crypto
+ * @version     4.11
+ * @package     easify-woocommerce-connector
+ * @author      Richard Moore
+ */
+
 class Easify_Generic_Crypto {
 
     private $method = 'aes-256-ctr';

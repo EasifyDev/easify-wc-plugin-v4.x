@@ -24,7 +24,7 @@ require_once( 'easify-generic-constants.php' );
  * @class       Easify_WC_Easify_Options
  * @version     4.33
  * @package     easify-woocommerce-connector
- * @author      Easify 
+ * @author      Richard Moore
  */
 class Easify_WC_Easify_Options {
 

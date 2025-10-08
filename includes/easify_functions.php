@@ -16,6 +16,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+/**
+ * @version     4.0
+ * @package     easify-woocommerce-connector
+ * @author      Richard Moore
+ */
 require_once(ABSPATH . 'wp-admin/includes/file.php');
 
 function SendEmail($Text) {

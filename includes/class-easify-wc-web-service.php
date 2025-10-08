@@ -32,7 +32,7 @@ require_once( 'class-easify-generic-web-service.php' );
  * @class       Easify_WC_Web_Service
  * @version     4.0
  * @package     easify-woocommerce-connector
- * @author      Easify 
+ * @author      Richard Moore
  */
 class Easify_WC_Web_Service extends Easify_Generic_Web_Service {
 

@@ -23,7 +23,7 @@ require_once( 'includes/class-easify-generic-basic-auth.php' );
  *
  * Uninstalls Easify WooCommerce Connector options
  *
- * @author      Easify
+ * @author      Richard Moore
  * @version     4.1
  */
 if( !defined('ABSPATH') && !defined('WP_UNINSTALL_PLUGIN') )

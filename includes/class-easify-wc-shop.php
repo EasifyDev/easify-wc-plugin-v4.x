@@ -29,7 +29,7 @@ include_once(dirname(__FILE__) . '/class-easify-generic-shop.php');
  * @class       Easify_Generic_Shop
  * @version     4.36
  * @package     easify-woocommerce-connector
- * @author      Easify 
+ * @author      Richard Moore
  */
 class Easify_WC_Shop extends Easify_Generic_Shop {
 

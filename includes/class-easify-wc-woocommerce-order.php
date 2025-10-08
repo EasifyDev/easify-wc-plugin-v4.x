@@ -23,7 +23,7 @@
  * @class       Easify_WC_WooCommerce_Order
  * @version     4.0
  * @package     easify-woocommerce-connector
- * @author      Easify 
+ * @author      Richard Moore
  */
 class Easify_WC_WooCommerce_Order {
 

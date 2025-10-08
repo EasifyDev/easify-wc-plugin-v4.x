@@ -29,7 +29,7 @@ require_once( 'class-easify-generic-basic-auth.php' );
  * @class       Easify_WC_Activation
  * @version     4.25
  * @package     easify-woocommerce-connector
- * @author      Easify 
+ * @author      Richard Moore
  */
 class Easify_WC_Activation{
      /**

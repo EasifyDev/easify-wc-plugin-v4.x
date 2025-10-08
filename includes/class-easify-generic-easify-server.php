@@ -31,7 +31,7 @@ require_once('class-easify-compression.php');
  * @class       Easify_Generic_Easify_Server
  * @version     4.39
  * @package     easify-woocommerce-connector
- * @author      Easify 
+ * @author      Richard Moore
  */
 class Easify_Generic_Easify_Server {
 

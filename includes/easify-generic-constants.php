@@ -16,6 +16,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+/**
+ * @version     4.0
+ * @package     easify-woocommerce-connector
+ * @author      Richard Moore
+ */
+
 // Constants
 if (!defined('EASIFY_TIMEOUT')) {
     define('EASIFY_TIMEOUT', 600);

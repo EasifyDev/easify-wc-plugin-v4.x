@@ -23,7 +23,7 @@
  * @class       class-easify-compression
  * @version     4.36
  * @package     easify-woocommerce-connector
- * @author      Easify
+ * @author      Richard Moore
  */
 
 function decompressString($compressedText) {

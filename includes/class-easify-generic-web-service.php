@@ -43,7 +43,7 @@ require_once( 'class-easify-generic-basic-auth.php' );
  * @class       Easify_Generic_Web_Service
  * @version     4.16
  * @package     easify-woocommerce-connector
- * @author      Easify 
+ * @author      Richard Moore
  */
 abstract class Easify_Generic_Web_Service {
 

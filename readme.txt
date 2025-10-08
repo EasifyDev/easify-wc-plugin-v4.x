@@ -1,5 +1,5 @@
 === Easify Server WooCommerce ===
-Contributors: easify
+Contributors: Richard Moore, John Blakeman
 Donate link: https://www.easify.co.uk/
 Tags: easify, epos, epos software, stock control software, accounting software, invoicing software, small business software, ecommerce, e-commerce, woothemes, wordpress ecommerce, woocommerce, shopping cart
 Requires at least: 5.0

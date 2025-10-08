@@ -31,7 +31,7 @@ require_once ( 'class-easify-generic-crypto.php' );
  * @class       Easify_WC__Plugin_Settings_Page
  * @version     4.39
  * @package     easify-woocommerce-connector
- * @author      Easify 
+ * @author      Richard Moore
  */
 class Easify_WC__Plugin_Settings_Page {
 

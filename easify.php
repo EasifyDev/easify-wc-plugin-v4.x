@@ -7,7 +7,7 @@
  * Version: 4.39
  * License: GPL2
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
- * Author: Easify
+ * Author: Richard Moore
  * Author URI: https://www.easify.co.uk/
  * Requires at least: 5.0
  * Tested up to: 6.7.2

@@ -56,7 +56,7 @@ require_once( 'class-easify-generic-logging.php' );
  * @class       Easify_Generic_Basic_Auth
  * @version     4.11
  * @package     easify-woocommerce-connector
- * @author      Easify 
+ * @author      Richard Moore
  */
 class Easify_Generic_Basic_Auth {
 
