@@ -55,6 +55,10 @@ class Easify_WC_Activation{
         $basic_auth = new Easify_Generic_Basic_Auth();
         $basic_auth->activate();
         
+		// Create logging directory if necessary
+        $logdir = plugin_dir_path(plugin_dir_path(__FILE__)) . 'logs';
+        if (! file_exists($logdir)) wp_mkdir_p($logdir); 
+
         /* If Orders Options not present - create them. Note: we don't want to 
          * overwrite them in case the plugin was temporarily deactivated then 
          * re-activated */
